@@ -1,0 +1,74 @@
+{
+    "name": "@micro-app/plugin-webpack",
+    "version": "0.0.1-alpha.1",
+    "description": "[Plugin] webpack adapter plugin.",
+    "main": "src/index.js",
+    "bin": {
+        "micro-app-build": "./bin/micro-app-build"
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "lint:fix": "npm run lint -- --fix",
+        "test": "jest"
+    },
+    "files": [
+        "bin",
+        "src"
+    ],
+    "homepage": "https://github.com/MicroAppJS/MicroApp-Plugin-Webpack",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MicroAppJS/MicroApp-Plugin-Webpack.git"
+    },
+    "bugs": {
+        "url": "https://github.com/MicroAppJS/MicroApp-Plugin-Webpack/issues"
+    },
+    "keywords": [
+        "micro",
+        "micro-app",
+        "micro-application",
+        "plugin",
+        "webpack-adapter",
+        "adapter",
+        "webpack"
+    ],
+    "author": {
+        "name": "Zyao89",
+        "email": "zyao89@gmail.com"
+    },
+    "license": "MIT",
+    "lint-staged": {
+        "*.js": [
+            "npm run lint:fix",
+            "git add"
+        ]
+    },
+    "peerDependencies": {
+        "@micro-app/cli": ">=0.3.0",
+        "@micro-app/core": ">=0.3.0"
+    },
+    "devDependencies": {
+        "@micro-app/cli": "^0.3.0-alpha.1",
+        "@micro-app/core": "^0.3.0-alpha.2",
+        "@types/jest": "^24.0.19",
+        "babel-eslint": "^10.0.3",
+        "coveralls": "^3.0.7",
+        "eslint": "^5.16.0",
+        "eslint-config-2o3t": "^1.1.17",
+        "husky": "^3.0.9",
+        "jest": "^24.9.0",
+        "lint-staged": "^9.4.2",
+        "webpack": "^4.41.1"
+    },
+    "dependencies": {
+        "@micro-app/shared-utils": "^0.1.4",
+        "address": "^1.1.2",
+        "cli-highlight": "^2.1.4",
+        "clipboardy": "^2.1.0",
+        "default-gateway": "^5.0.5",
+        "launch-editor-middleware": "^2.2.1",
+        "portfinder": "^1.0.25",
+        "webpack-chain": "^6.0.0",
+        "webpack-merge": "^4.2.2"
+    }
+}
