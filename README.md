@@ -85,8 +85,6 @@ npx micro-app show methods
 ```js
 ╰─➤  npx micro-app show methods
   Plugin Methods:
-     * beforeMergeWebpackConfig    ( 合并 webpack 配置之前事件 )
-     * afterMergeWebpackConfig     ( 合并 webpack 配置之后事件 )
      * modifyChainWebpcakConfig    ( 合并之后提供 webpack-chain 进行再次修改事件 )
      * onChainWebpcakConfig        ( 修改之后提供 webpack-chain 进行查看事件 )
      * modifyWebpackConfig         ( 合并之后提供 webpack config 进行再次修改事件 )

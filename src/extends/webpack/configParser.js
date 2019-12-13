@@ -3,7 +3,7 @@
 const { _, tryRequire } = require('@micro-app/shared-utils');
 const path = require('path');
 
-module.exports = function configParser(obj, key) {
+module.exports = function configParser(obj, key, extraConfig = {}) {
     const selfConfig = obj[key] || {};
     const originalConfig = selfConfig.originalConfig || {};
     const webpackConfig = originalConfig.webpack || {};
@@ -27,33 +27,10 @@ module.exports = function configParser(obj, key) {
         });
     }
 
-
-    function publicPaths() {
-        const _staticPaths = staticPaths();
-        if (_staticPaths.length) {
-            return _staticPaths;
-        }
-
-        // String | Array
-        const publicPath = originalConfig.publicPath || [];
-        const publicPaths = [];
-        if (_.isString(publicPath)) {
-            publicPaths.push(publicPath);
-        } else if (Array.isArray(publicPath)) {
-            publicPaths.push(...publicPath);
-        }
-        return publicPaths.filter(item => {
-            return !(_.isUndefined(item) || _.isNull(item));
-        }).map(item => {
-            if (!tryRequire.resolve(item)) {
-                return path.resolve(selfConfig.root, item);
-            }
-            return item;
-        });
-    }
-
     function dlls() {
-
+        if (extraConfig.disabled) {
+            return [];
+        }
         // 支持 array
         const dlls = originalConfig.dlls || [];
         const _dll = originalConfig.dll; // 兼容
@@ -84,6 +61,9 @@ module.exports = function configParser(obj, key) {
     }
 
     function htmls() {
+        if (extraConfig.disabled) {
+            return [];
+        }
         // 支持 array
         const htmls = originalConfig.htmls || (!originalConfig.html && webpackConfig.plugins && Array.isArray(webpackConfig.plugins) && webpackConfig.plugins.filter(item => {
             const constru = item.constructor;
@@ -111,6 +91,9 @@ module.exports = function configParser(obj, key) {
     }
 
     function entry() {
+        if (extraConfig.disabled) {
+            return {};
+        }
         const entry = originalConfig.entry || webpackConfig.entry || {}; // 兼容
         // fix entry path
         if (typeof entry === 'object') {
@@ -150,7 +133,6 @@ module.exports = function configParser(obj, key) {
 
     return {
         staticPaths,
-        publicPaths,
         dlls,
         htmls,
         entry,

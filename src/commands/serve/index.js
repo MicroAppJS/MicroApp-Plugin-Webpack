@@ -15,15 +15,14 @@ module.exports = function serveCommand(api, opts) {
 
     api.modifyCreateDevServer(() => {
 
-        const { _, tryRequire, chalk, openBrowser, Env } = require('@micro-app/shared-utils');
-        const path = require('path');
+        const { _, tryRequire, chalk, openBrowser, Env, semver } = require('@micro-app/shared-utils');
         const url = require('url');
-        const launchEditorMiddleware = require('launch-editor-middleware ');
+        const launchEditorMiddleware = require('launch-editor-middleware');
         const portfinder = require('portfinder');
-        const prepareURLs = require('../../../utils/prepareURLs');
-        const prepareProxy = require('../../../utils/prepareProxy');
-        const validateWebpackConfig = require('../../../utils/validateWebpackConfig');
-        const isAbsoluteUrl = require('../../../utils/isAbsoluteUrl');
+        const prepareURLs = require('../../utils/prepareURLs');
+        const prepareProxy = require('../../utils/prepareProxy');
+        const validateWebpackConfig = require('../../utils/validateWebpackConfig');
+        const isAbsoluteUrl = require('../../utils/isAbsoluteUrl');
 
         function addConfig(id, fn) {
             if (tryRequire.resolve(id)) {
@@ -44,13 +43,22 @@ module.exports = function serveCommand(api, opts) {
                 logger.throw('[serve]', 'Not Found "webpack-dev-server"!');
             }
 
+            const webpackVersion = require('webpack/package.json').version;
+            const webpackDevServerVersion = require('webpack-dev-server/package.json').version;
+
             const isInContainer = checkInContainer();
             const isProduction = mode === 'production';
 
             const options = api.config || {};
 
+            const spinner = logger.spinner(`Starting for ${mode}...`);
+
             // configs that only matters for dev server
             api.modifyChainWebpcakConfig(webpackChain => {
+
+                // webpack 4
+                const isWebpack4 = semver.satisfies(webpackVersion, '>=4');
+
                 if (mode !== 'production' && mode !== 'test') {
                     webpackChain
                         .devtool('cheap-module-eval-source-map');
@@ -61,20 +69,40 @@ module.exports = function serveCommand(api, opts) {
                             .use(require(id));
                     });
 
-                    // https://github.com/webpack/webpack/issues/6642
-                    // https://github.com/vuejs/vue-cli/issues/3539
-                    webpackChain
-                        .output
-                        .globalObject('(typeof self !== \'undefined\' ? self : this)');
+                    if (isWebpack4) {
+                        // https://github.com/webpack/webpack/issues/6642
+                        // https://github.com/vuejs/vue-cli/issues/3539
+                        webpackChain
+                            .output
+                            .globalObject('(typeof self !== \'undefined\' ? self : this)');
+                    }
 
                     if (options.devServer && options.devServer.progress !== false) {
                         addConfig('webpack/lib/ProgressPlugin', id => {
                             webpackChain
                                 .plugin('progress')
-                                .use(require(id));
+                                .use(require(id), [
+                                    {
+                                        modules: false,
+                                        profile: false,
+                                        handler: (percentage, message /* , ...args */) => {
+                                            if (spinner && percentage <= 0) {
+                                                spinner.start();
+                                            }
+                                            if (spinner) {
+                                                spinner.text = Number(percentage * 100).toFixed(2) + '%  ' + chalk.gray(`( ${message} )`);
+                                            }
+                                            // api.logger.logo(percentage, message, ...args);
+                                            if (spinner && percentage >= 1) {
+                                                spinner.succeed('Compiled Done!');
+                                            }
+                                        },
+                                    },
+                                ]);
                         });
                     }
                 }
+                return webpackChain;
             });
 
             const webpackConfig = api.resolveWebpackConfig();
@@ -88,7 +116,7 @@ module.exports = function serveCommand(api, opts) {
             // in webpack config
             const projectDevServerOptions = Object.assign(
                 webpackConfig.devServer || {},
-                options.devServer
+                options.devServer || {}
             );
 
             // entry arg
@@ -125,7 +153,7 @@ module.exports = function serveCommand(api, opts) {
 
             const proxySettings = prepareProxy(
                 projectDevServerOptions.proxy,
-                api.resolve('public')
+                options.staticPaths || []
             );
 
             // inject dev & hot-reload middleware entries
@@ -164,20 +192,24 @@ module.exports = function serveCommand(api, opts) {
             // create compiler
             const compiler = webpack(webpackConfig);
 
+            const isWebpackDevServer3 = semver.satisfies(webpackDevServerVersion, '>=3');
+
             // create server
-            const server = new WebpackDevServer(compiler, Object.assign({
+            const server = new WebpackDevServer(compiler, Object.assign(isWebpackDevServer3 ? {
                 logLevel: 'silent',
+            } : {}, {
                 clientLogLevel: 'silent',
                 historyApiFallback: {
                     disableDotRule: true,
                     rewrites: genHistoryApiFallbackRewrites(options.publicPath, options.pages),
                 },
-                contentBase: api.resolve('public'),
+                contentBase: options.staticPaths || [],
                 watchContentBase: !isProduction,
                 hot: !isProduction,
                 compress: isProduction,
                 publicPath: options.publicPath,
-                overlay: isProduction // TODO disable this
+                // TODO disable this
+                overlay: isProduction
                     ? false
                     : { warnings: false, errors: true },
             }, projectDevServerOptions, {
@@ -210,14 +242,12 @@ module.exports = function serveCommand(api, opts) {
             }));
 
             [ 'SIGINT', 'SIGTERM' ].forEach(signal => {
-                process.on(signal, () => {
+                process.once(signal, () => {
                     server.close(() => {
                         process.exit(0);
                     });
                 });
             });
-
-            const spinner = logger.spinner(`Starting for ${mode}...`);
 
             return new Promise((resolve, reject) => {
                 spinner.start();
@@ -225,6 +255,10 @@ module.exports = function serveCommand(api, opts) {
                 // log instructions & open browser on first compilation complete
                 let isFirstCompile = true;
                 const done = stats => {
+                    if (isFirstCompile) {
+                        spinner.stop();
+                    }
+
                     if (stats.hasErrors()) {
                         return;
                     }

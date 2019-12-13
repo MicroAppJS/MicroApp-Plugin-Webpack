@@ -11,21 +11,19 @@ module.exports = function inspectCommand(api, opts) {
         usage: 'micro-app inspect [options] [...paths]',
         options: {
             '--mode': 'specify env mode (default: development)',
+            '--type <type>': 'adapter type, eg. [ webpack, etc. ].',
             '--rule <ruleName>': 'inspect a specific module rule',
             '--plugin <pluginName>': 'inspect a specific plugin',
             '--rules': 'list all module rule names',
             '--plugins': 'list all plugin names',
             '--verbose': 'show full function definitions in output',
-            '--type <type>': 'adapter type, eg. [ webpack, vusion, etc. ].',
-            '--open-soft-link': '启用开发软链接',
-            '--open-disabled-entry': '支持可配置禁用部分模块入口.',
         },
         details: `
 Examples:
-    ${chalk.gray('# vusion')}
-    micro-app inspect --type vusion
-    ${chalk.gray('# open soft link')}
-    micro-app inspect --type vusion --open-soft-link
+    ${chalk.gray('# mode: development')}
+    micro-app inspect --mode development
+    ${chalk.gray('# inspect all plugins')}
+    micro-app inspect --plugins
             `.trim(),
     },
     args => {

@@ -12,15 +12,14 @@ module.exports = function extendWebpack(api, opts) {
     // 扩增 microsConfig 配置
     api.modifyMicrosConfig(_config => {
         const configParser = require('./configParser');
+        const microsExtraConfig = api.microsExtraConfig;
         return Object.keys(_config).reduce((obj, key) => {
-            const _configParser = configParser(obj, key);
-            const publicPaths = _configParser.publicPaths();
+            const _configParser = configParser(obj, key, microsExtraConfig[key]);
             Object.assign(obj[key], {
                 entry: _configParser.entry(),
                 htmls: _configParser.htmls(),
                 dlls: _configParser.dlls(),
-                publicPaths,
-                staticPaths: publicPaths, // deprecated
+                staticPaths: _configParser.staticPaths(),
             });
             return obj;
         }, _config);
@@ -32,14 +31,9 @@ module.exports = function extendWebpack(api, opts) {
         const microsConfig = api.microsConfig;
         const selfConfig = api.selfConfig;
         const _selfConfigCombine = configCombine(selfConfig, 'index');
-        const micros = api.micros;
-        const finalConfig = smartMerge({}, ...micros.map(key => {
-            const obj = microsConfig[key];
-            if (!_.isPlainObject(obj)) return {};
-            const _configCombine = configCombine(obj, key);
-            return Object.assign({
-                pages: _configCombine.pages(),
-            }, _.pick(obj, [
+
+        function pickOptions(obj) {
+            return _.pick(obj, [
                 'alias',
                 'resolveAlias',
                 'shared',
@@ -47,15 +41,30 @@ module.exports = function extendWebpack(api, opts) {
                 'entry',
                 'htmls',
                 'dlls',
-                'publicPaths',
                 'staticPaths',
-            ]));
-        }), Object.assign({
+            ]);
+        }
+
+        const micros = api.micros;
+        const finalMicrosConfigs = micros.map(key => {
+            const obj = microsConfig[key];
+            if (!obj) return {};
+            const _configCombine = configCombine(obj, key);
+            return Object.assign({
+                pages: _configCombine.pages(),
+                nodeModulesPaths: _configCombine.nodeModulesPaths(),
+            }, pickOptions(obj));
+        });
+
+        const finalConfig = smartMerge({}, ...finalMicrosConfigs, Object.assign({
             pages: _selfConfigCombine.pages(),
-        }), selfConfig);
+            nodeModulesPaths: _selfConfigCombine.nodeModulesPaths(),
+        }, pickOptions(selfConfig), selfConfig));
+
         const originalConfig = selfConfig.originalConfig || {};
         const defaultConfig = {
             outputDir: 'dist',
+            publicPath: '/',
             assetsDir: '',
             loaderOptions: {},
             devServer: {},
@@ -64,6 +73,7 @@ module.exports = function extendWebpack(api, opts) {
             ...defaultConfig,
         }, _.pick(originalConfig, [
             'outputDir',
+            'publicPath',
             'assetsDir',
             'loaderOptions',
             'devServer',

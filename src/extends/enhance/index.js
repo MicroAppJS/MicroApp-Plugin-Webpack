@@ -9,10 +9,8 @@ module.exports = function WebpackAdapter(api, opts) {
 
     const { _ } = require('@micro-app/shared-utils');
     const Config = require('webpack-chain');
-    const webpackMerge = require('./utils/merge-webpack');
 
     let initialized = false;
-    let originalWebpackConfig = {};
 
     api.extendMethod('resolveChainableWebpackConfig', {
         description: 'resolve webpack-chain config.',
@@ -21,8 +19,12 @@ module.exports = function WebpackAdapter(api, opts) {
             api.logger.error('please call after "onInitWillDone" !');
             process.exit(1);
         }
+        const selfConfig = api.selfConfig || {};
+        const originalConfig = selfConfig.originalConfig || {};
+        const _originalWebpackConfig = _.cloneDeep(originalConfig.webpack || {});
+        delete _originalWebpackConfig.entry; // 不接受 entry, 内部已经做了兼容
+        delete _originalWebpackConfig.plugins; // 不接受 plugins
 
-        const _originalWebpackConfig = _.cloneDeep(originalWebpackConfig);
         const webpackChainConfig = new Config();
         webpackChainConfig.merge(_originalWebpackConfig);
 
@@ -44,20 +46,6 @@ module.exports = function WebpackAdapter(api, opts) {
     });
 
     api.onInitWillDone(() => {
-        const webpackConfig = _.cloneDeep(api.config.webpack || {});
-        delete webpackConfig.plugins; // 不接受 plugins
-
-        api.applyPluginHooks('beforeMergeWebpackConfig', webpackConfig);
-
-        originalWebpackConfig = webpackMerge(webpackConfig, {
-            microsExtraConfig: api.microsExtraConfig || {},
-            micros: api.micros,
-            config: api.selfConfig || {},
-            microsConfig: api.microsConfig,
-        });
-
-        api.applyPluginHooks('afterMergeWebpackConfig', originalWebpackConfig);
-
         initialized = true;
     });
 };

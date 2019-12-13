@@ -32,7 +32,7 @@ module.exports = function prepareProxy(proxy, appPublicFolder) {
     if (Array.isArray(proxy) || (typeof proxy !== 'object' && typeof proxy !== 'string')) {
         console.log(
             chalk.red(
-                'When specified, "proxy" in package.json must be a string or an object.'
+                'When specified, "proxy" must be a string or an object.'
             )
         );
         console.log(
@@ -46,12 +46,18 @@ module.exports = function prepareProxy(proxy, appPublicFolder) {
         process.exit(1);
     }
 
+    if (!Array.isArray(appPublicFolder)) {
+        appPublicFolder = [ appPublicFolder ];
+    }
+
     // If proxy is specified, let it handle any request except for
     // files in the public folder and requests to the WebpackDevServer socket endpoint.
     // https://github.com/facebook/create-react-app/issues/6720
     function mayProxy(pathname) {
-        const maybePublicPath = path.resolve(appPublicFolder, pathname.slice(1));
-        const isPublicFileRequest = fs.existsSync(maybePublicPath);
+        const isPublicFileRequest = appPublicFolder.some(folder => {
+            const maybePublicPath = path.resolve(folder, pathname.slice(1));
+            return fs.existsSync(maybePublicPath);
+        });
         const isWdsEndpointRequest = pathname.startsWith('/sockjs-node'); // used by webpackHotDevClient
         return !(isPublicFileRequest || isWdsEndpointRequest);
     }

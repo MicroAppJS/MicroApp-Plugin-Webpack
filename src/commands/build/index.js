@@ -26,18 +26,26 @@ module.exports = function buildCommand(api, opts) {
         usage: 'micro-app build [options]',
         options: {
             '--mode': 'specify env mode (default: development)',
-            '--type <type>': 'adapter type, eg. [ webpack, vusion ].',
+            '--type <type>': 'adapter type, eg. [ webpack, etc. ].',
             '--dest': 'specify output directory',
             '--watch': 'watch for changes',
             '--clean': 'remove the dist directory before building the project',
-            '--target': `app | lib (default: ${defaults.target})`,
+            // '--target': `app | lib (default: ${defaults.target})`,
         },
         details: `
 Examples:
-    ${chalk.gray('# vusion')}
-    micro-app build --type vusion
+    ${chalk.gray('# watch')}
+    micro-app build --watch
           `.trim(),
     }, async args => {
+        const logger = api.logger;
+
+        // TODO 兼容, 下个版本删除
+        if (args.t && !args.type) {
+            args.type = args.t;
+            logger.warn('you should be use "--type <type>"!!!');
+        }
+
         for (const key in defaults) {
             if (args[key] == null) {
                 args[key] = defaults[key];
@@ -45,7 +53,6 @@ Examples:
         }
 
         const mode = api.mode;
-        const logger = api.logger;
 
         const webpack = tryRequire('webpack');
         if (!webpack) {
@@ -84,8 +91,7 @@ Examples:
             webpack(webpackConfig, (err, stats) => {
 
                 api.applyPluginHooks('afterBuild', { args });
-
-                spinner.stop();
+                spinner.info('Build Done');
 
                 if (err) {
                     // 在这里处理错误
@@ -94,6 +100,8 @@ Examples:
                 }
 
                 if (stats.hasErrors()) {
+                    // 在这里处理错误
+                    api.applyPluginHooks('onBuildFail', { stats, args });
                     return reject('Build failed with errors.');
                 }
 

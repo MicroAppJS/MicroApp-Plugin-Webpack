@@ -5,6 +5,8 @@ const path = require('path');
 const extendConfigs = [
     'webpack',
     'enhance',
+    'unified/base',
+    'unified/prod',
 ];
 
 const commands = [
@@ -19,7 +21,7 @@ module.exports = [
         const link = path.resolve(__dirname, 'extends', name);
         const item = require(link);
         if (item.configuration && !item.configuration.alias) {
-            item.configuration.alias = `extends-${name}`;
+            item.configuration.alias = `extends-${name.replace(/\//, '_')}`;
         }
         return item;
     }),
@@ -28,7 +30,7 @@ module.exports = [
         const link = path.resolve(__dirname, 'commands', name);
         const item = require(link);
         if (item.configuration && !item.configuration.alias) {
-            item.configuration.alias = `commands-${name}`;
+            item.configuration.alias = `commands-${name.replace(/\//, '_')}`;
         }
         return item;
     }),

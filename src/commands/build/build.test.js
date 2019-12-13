@@ -12,6 +12,8 @@ describe('Command build', () => {
 
     it('build run', async () => {
 
+        process.env.NODE_ENV = 'production';
+
         const { service } = require('@micro-app/cli');
 
         await service.run('build', getArgvs());
@@ -23,6 +25,8 @@ describe('Command build', () => {
     });
 
     it('global cmd config', async () => {
+
+        process.env.NODE_ENV = 'production';
 
         const { service } = require('@micro-app/cli');
 
