@@ -2,7 +2,7 @@
 
 module.exports = (api, opts) => {
 
-    api.registerMethod('modifyChainWebpcakConfig', {
+    api.registerMethod('modifyChainWebpackConfig', {
         type: api.API_TYPE.MODIFY,
         description: '合并之后提供 webpack-chain 进行再次修改事件',
     });

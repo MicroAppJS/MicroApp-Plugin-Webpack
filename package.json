@@ -15,13 +15,13 @@
         "bin",
         "src"
     ],
-    "homepage": "https://github.com/MicroAppJS/MicroApp-Plugin-Webpack",
+    "homepage": "https://github.com/MicroAppJS/plugin-webpack",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/MicroAppJS/MicroApp-Plugin-Webpack.git"
+        "url": "git+https://github.com/MicroAppJS/plugin-webpack.git"
     },
     "bugs": {
-        "url": "https://github.com/MicroAppJS/MicroApp-Plugin-Webpack/issues"
+        "url": "https://github.com/MicroAppJS/plugin-webpack/issues"
     },
     "keywords": [
         "micro",

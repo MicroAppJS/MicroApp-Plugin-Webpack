@@ -6,7 +6,7 @@ module.exports = function unifiedExtend(api, opts) {
 
     const { _, tryRequire, fs, semver } = require('@micro-app/shared-utils');
 
-    api.modifyChainWebpcakConfig(webpackChain => {
+    api.modifyChainWebpackConfig(webpackChain => {
         const webpackPkgInfo = tryRequire('webpack/package.json');
         const webpackVersion = webpackPkgInfo && webpackPkgInfo.version || '3'; // 默认 3
 

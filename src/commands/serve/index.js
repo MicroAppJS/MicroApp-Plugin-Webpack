@@ -54,7 +54,7 @@ module.exports = function serveCommand(api, opts) {
             const spinner = logger.spinner(`Starting for ${mode}...`);
 
             // configs that only matters for dev server
-            api.modifyChainWebpcakConfig(webpackChain => {
+            api.modifyChainWebpackConfig(webpackChain => {
 
                 // webpack 4
                 const isWebpack4 = semver.satisfies(webpackVersion, '>=4');

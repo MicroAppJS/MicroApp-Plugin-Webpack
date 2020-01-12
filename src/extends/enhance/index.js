@@ -28,7 +28,7 @@ module.exports = function WebpackAdapter(api, opts) {
         const webpackChainConfig = new Config();
         webpackChainConfig.merge(_originalWebpackConfig);
 
-        const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpcakConfig', webpackChainConfig);
+        const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig);
         api.applyPluginHooks('onChainWebpcakConfig', finalWebpackChainConfig);
 
         api.setState('webpackChainConfig', finalWebpackChainConfig);
