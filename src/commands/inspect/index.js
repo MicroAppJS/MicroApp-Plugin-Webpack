@@ -32,7 +32,9 @@ Examples:
 
         const { _: paths, verbose } = args;
 
-        const webpackConfig = api.resolveWebpackConfig();
+        const webpackConfig = api.resolveWebpackConfig({
+            target: args.target,
+        });
 
         const config = _.cloneDeep(webpackConfig);
 

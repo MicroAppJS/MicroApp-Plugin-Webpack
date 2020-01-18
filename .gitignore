@@ -86,3 +86,7 @@ dist
 *.njsproj
 *.sln
 *.sw*
+
+
+# custom
+microapp/.temp

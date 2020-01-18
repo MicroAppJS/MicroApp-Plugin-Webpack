@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+const config = {
     name: '@micro-app/demo',
     description: '',
     version: '0.0.1',
@@ -43,14 +43,6 @@ module.exports = {
         },
     },
 
-    strict: true,
-
-    // micros: [ 'test' ], // 被注册的容器
-    // micros$$test: { // 单独配置
-    //     disabled: true, // 禁用入口
-    //     link: '', // 本地路径, 进行本地开发使用的软链接.
-    // },
-
     // 服务配置
     server: {
         entry: '', // 服务端入口
@@ -59,11 +51,11 @@ module.exports = {
             // 服务端回调参数
         },
     },
-
-    plugins: [
-        {
-            id: 'test',
-            link: __dirname + '/src/index.js',
-        },
-    ],
 };
+
+
+config.plugins = [
+    __dirname,
+];
+
+module.exports = config;

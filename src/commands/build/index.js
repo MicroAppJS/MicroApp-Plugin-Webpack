@@ -5,14 +5,6 @@ const defaults = {
     target: 'app',
 };
 
-const modifyConfig = (config, fn) => {
-    if (Array.isArray(config)) {
-        config.forEach(c => fn(c));
-    } else {
-        fn(config);
-    }
-};
-
 module.exports = function buildCommand(api, opts) {
 
     const { tryRequire, chalk, fs } = require('@micro-app/shared-utils');
@@ -28,15 +20,14 @@ module.exports = function buildCommand(api, opts) {
             '--mode': 'specify env mode (default: development)',
             '--type <type>': 'adapter type, eg. [ webpack, etc. ].',
             '--dest': 'specify output directory',
-            '--watch': 'watch for changes',
             '--clean': 'remove the dist directory before building the project',
-            // '--target': `app | lib (default: ${defaults.target})`,
+            '--target': `app | lib | plugin (default: ${defaults.target})`,
         },
         details: `
 Examples:
     ${chalk.gray('# watch')}
     micro-app build --watch
-          `.trim(),
+            `.trim(),
     }, async args => {
         const logger = api.logger;
 
@@ -63,13 +54,9 @@ Examples:
 
         api.applyPluginHooks('beforeBuild', { args });
 
-        const webpackConfig = api.resolveWebpackConfig();
-
-        if (args.watch) {
-            modifyConfig(webpackConfig, config => {
-                config.watch = true;
-            });
-        }
+        const webpackConfig = api.resolveWebpackConfig({
+            target: args.target,
+        });
 
         if (args.dest) {
             // Override outputDir before resolving webpack config as config relies on it (#2327)
@@ -102,6 +89,7 @@ Examples:
                 if (stats.hasErrors()) {
                     // 在这里处理错误
                     api.applyPluginHooks('onBuildFail', { stats, args });
+                    // console.warn(stats);
                     return reject('Build failed with errors.');
                 }
 
@@ -114,7 +102,6 @@ Examples:
                     if (args.target === 'app') {
                         if (!args.watch) {
                             logger.success(`Build complete. The ${chalk.cyan(targetDirShort)} directory is ready to be deployed.`);
-                            logger.info(`Check out deployment instructions at ${chalk.cyan('https://cli.vuejs.org/guide/deployment.html')}\n`);
                         } else {
                             logger.success('Build complete. Watching for changes...');
                         }
@@ -127,7 +114,7 @@ Examples:
                 resolve();
             });
         }).then(() => {
-            api.logger.success('>>> Build Success >>>');
+            api.logger.success('>>> Build Success !!!');
         }).catch(e => {
             api.logger.error('>>> Build Error >>>', e);
         });

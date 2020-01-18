@@ -1,12 +1,11 @@
 'use strict';
 
-const path = require('path');
-
 const extendConfigs = [
     'webpack',
     'enhance',
     'unified/base',
     'unified/prod',
+    'unified/plugin',
 ];
 
 const commands = [
@@ -18,8 +17,7 @@ const commands = [
 // 只能通过集中初始化去实现, 不可进行插件注册(registerPlugins). 否则顺序不可控.
 module.exports = [
     ...extendConfigs.map(name => {
-        const link = path.resolve(__dirname, 'extends', name);
-        const item = require(link);
+        const item = require(`./extends/${name}`);
         if (item.configuration && !item.configuration.alias) {
             item.configuration.alias = `extends-${name.replace(/\//, '_')}`;
         }
@@ -27,8 +25,7 @@ module.exports = [
     }),
 
     ...commands.map(name => {
-        const link = path.resolve(__dirname, 'commands', name);
-        const item = require(link);
+        const item = require(`./commands/${name}`);
         if (item.configuration && !item.configuration.alias) {
             item.configuration.alias = `commands-${name.replace(/\//, '_')}`;
         }

@@ -105,7 +105,9 @@ module.exports = function serveCommand(api, opts) {
                 return webpackChain;
             });
 
-            const webpackConfig = api.resolveWebpackConfig();
+            const webpackConfig = api.resolveWebpackConfig({
+                target: args.target,
+            });
 
             // check for common config errors
             validateWebpackConfig(webpackConfig, api, options);
@@ -194,6 +196,8 @@ module.exports = function serveCommand(api, opts) {
 
             const isWebpackDevServer3 = semver.satisfies(webpackDevServerVersion, '>=3');
 
+            const contentBase = Array.isArray(options.staticPaths) ? (options.staticPaths.length ? options.staticPaths : false) : options.staticPaths || false;
+
             // create server
             const server = new WebpackDevServer(compiler, Object.assign(isWebpackDevServer3 ? {
                 logLevel: 'silent',
@@ -203,7 +207,7 @@ module.exports = function serveCommand(api, opts) {
                     disableDotRule: true,
                     rewrites: genHistoryApiFallbackRewrites(options.publicPath, options.pages),
                 },
-                contentBase: options.staticPaths || [],
+                contentBase,
                 watchContentBase: !isProduction,
                 hot: !isProduction,
                 compress: isProduction,
@@ -390,5 +394,5 @@ function genHistoryApiFallbackRewrites(baseUrl, pages = {}) {
 
 module.exports.configuration = {
     description: 'webpack hot serve for dev',
-    mode: 'development',
+    // mode: 'development',
 };

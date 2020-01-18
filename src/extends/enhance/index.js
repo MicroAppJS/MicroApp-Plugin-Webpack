@@ -12,24 +12,32 @@ module.exports = function WebpackAdapter(api, opts) {
 
     let initialized = false;
 
+    const logger = api.logger;
+
     api.extendMethod('resolveChainableWebpackConfig', {
         description: 'resolve webpack-chain config.',
-    }, () => {
+    }, ({ target = 'app' } = {}) => {
         if (!initialized) {
-            api.logger.error('please call after "onInitWillDone" !');
-            process.exit(1);
+            logger.throw('please call after "onInitWillDone" !');
         }
-        const selfConfig = api.selfConfig || {};
-        const originalConfig = selfConfig.originalConfig || {};
-        const _originalWebpackConfig = _.cloneDeep(originalConfig.webpack || {});
-        delete _originalWebpackConfig.entry; // 不接受 entry, 内部已经做了兼容
-        delete _originalWebpackConfig.plugins; // 不接受 plugins
 
         const webpackChainConfig = new Config();
-        webpackChainConfig.merge(_originalWebpackConfig);
+        let finalWebpackChainConfig = webpackChainConfig;
+        if (target === 'plugin') {
+            // TODO 针对所有 plugin 的配置进行处理
+            finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackPluginConfig', webpackChainConfig);
+            api.applyPluginHooks('onChainWebpcakPluginConfig', finalWebpackChainConfig);
+        } else {
+            const selfConfig = api.selfConfig || {};
+            const originalConfig = selfConfig.originalConfig || {};
+            const _originalWebpackConfig = _.cloneDeep(originalConfig.webpack || {});
+            delete _originalWebpackConfig.entry; // 不接受 entry, 内部已经做了兼容
+            delete _originalWebpackConfig.plugins; // 不接受 plugins
+            webpackChainConfig.merge(_originalWebpackConfig);
 
-        const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig);
-        api.applyPluginHooks('onChainWebpcakConfig', finalWebpackChainConfig);
+            finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig);
+            api.applyPluginHooks('onChainWebpcakConfig', finalWebpackChainConfig);
+        }
 
         api.setState('webpackChainConfig', finalWebpackChainConfig);
         return finalWebpackChainConfig;
@@ -37,9 +45,14 @@ module.exports = function WebpackAdapter(api, opts) {
 
     api.extendMethod('resolveWebpackConfig', {
         description: 'resolve webpack config.',
-    }, () => {
-        const finalWebpackChainConfig = api.resolveChainableWebpackConfig();
-        const webpackConfig = api.applyPluginHooks('modifyWebpackConfig', finalWebpackChainConfig.toConfig());
+    }, ({ target = 'app' } = {}) => {
+        const finalWebpackChainConfig = api.resolveChainableWebpackConfig({ target });
+        const webpackConfig = finalWebpackChainConfig.toConfig();
+        if (target === 'plugin') {
+            api.applyPluginHooks('modifyWebpackPluginConfig', webpackConfig);
+        } else {
+            api.applyPluginHooks('modifyWebpackConfig', webpackConfig);
+        }
 
         api.setState('webpackConfig', webpackConfig);
         return webpackConfig;

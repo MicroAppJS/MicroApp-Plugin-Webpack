@@ -11,19 +11,19 @@ module.exports = function unifiedExtend(api, opts) {
         const options = api.config || {};
 
         const getAssetPath = require('./utils/getAssetPath');
-        const outputFilename = getAssetPath(options, `js/[name].[contenthash:8].js`);
+        const outputFilename = getAssetPath(options, 'js/[name].[contenthash:8].js');
 
         webpackChain
             .context(api.root)
             .output
-                .filename(outputFilename)
-                .chunkFilename(outputFilename)
-                .end();
+            .filename(outputFilename)
+            .chunkFilename(outputFilename)
+            .end();
 
         const multiPageConfig = options.pages;
         const pages = Object.keys(multiPageConfig);
 
-        const publicCopyIgnore = ['.DS_Store'];
+        const publicCopyIgnore = [ '.DS_Store' ];
         pages.forEach(name => {
             const item = multiPageConfig[name];
             // load html
@@ -36,17 +36,17 @@ module.exports = function unifiedExtend(api, opts) {
             // keep chunk ids stable so async chunks have consistent hash (#1916)
             webpackChain
                 .plugin('named-chunks')
-                .use(NamedChunksPlugin, [chunk => {
+                .use(NamedChunksPlugin, [ chunk => {
                     if (chunk.name) {
-                        return chunk.name
+                        return chunk.name;
                     }
 
                     const hash = require('hash-sum');
                     const joinedHash = hash(
                         Array.from(chunk.modulesIterable, m => m.id).join('_')
                     );
-                    return `chunk-` + joinedHash
-                }]);
+                    return 'chunk-' + joinedHash;
+                } ]);
         }
 
         // copy static
@@ -56,14 +56,14 @@ module.exports = function unifiedExtend(api, opts) {
             if (staticPaths.length) {
                 webpackChain
                     .plugin('copy')
-                    .use(COPYPlugin, [staticPaths.map(publicDir => {
+                    .use(COPYPlugin, [ staticPaths.map(publicDir => {
                         return {
                             from: publicDir,
                             to: options.outputDir,
                             toType: 'dir',
-                            ignore: publicCopyIgnore
+                            ignore: publicCopyIgnore,
                         };
-                    })]);
+                    }) ]);
             }
         }
 

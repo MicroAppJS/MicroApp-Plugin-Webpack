@@ -4,40 +4,27 @@ module.exports = function unifiedExtend(api, opts) {
 
     api.assertVersion('>=0.3.0');
 
-    const { _, tryRequire, fs, semver } = require('@micro-app/shared-utils');
+    const { tryRequire, fs } = require('@micro-app/shared-utils');
 
     api.modifyChainWebpackConfig(webpackChain => {
-        const webpackPkgInfo = tryRequire('webpack/package.json');
-        const webpackVersion = webpackPkgInfo && webpackPkgInfo.version || '3'; // 默认 3
-
-        // webpack 4
-        const isWebpack4 = semver.satisfies(webpackVersion, '>=4');
+        webpackChain = baseConfig(webpackChain);
 
         const options = api.config || {};
 
-        const alias = options.resolveAlias || {};
-        const nodeModulesPaths = options.nodeModulesPaths || [];
-
         const entry = options.entry || {};
-
+        // entry
         Object.keys(entry).forEach(key => {
             webpackChain.entry(key).merge(entry[key]);
         });
 
-        const mode = api.mode;
-
-        if (isWebpack4) {
-            webpackChain
-                .mode(mode);
-        }
-
         // reset, 兼容
-        options.outputDir = webpackChain.output.get('path') || options.outputDir;
-        options.publicPath = webpackChain.output.get('publicPath') || options.publicPath;
+        options.outputDir = webpackChain.output.get('path') || options.outputDir || 'dist';
+        options.publicPath = webpackChain.output.get('publicPath') || options.publicPath || '/';
 
         const getAssetPath = require('./utils/getAssetPath');
         const outputFilename = getAssetPath(options, 'js/[name].js');
 
+        // output
         webpackChain
             .context(api.root)
             .output
@@ -47,24 +34,14 @@ module.exports = function unifiedExtend(api, opts) {
             .publicPath(options.publicPath)
             .end();
 
+        const alias = options.resolveAlias || {};
+        // alias
         webpackChain.resolve
             .extensions
             .merge([ '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm' ])
             .end()
-            .modules
-            .add('node_modules')
-            .add(api.resolve('node_modules'))
-            .merge(nodeModulesPaths)
-            .end()
             .alias
             .merge(alias)
-            .end();
-
-        webpackChain.resolveLoader
-            .modules
-            .add('node_modules')
-            .add(api.resolve('node_modules'))
-            .merge(nodeModulesPaths)
             .end();
 
         const multiPageConfig = options.pages;
@@ -103,14 +80,173 @@ module.exports = function unifiedExtend(api, opts) {
 
         return webpackChain;
     });
-};
 
-function getAssetPath(options, filePath) {
-    return options.assetsDir
-        ? path.posix.join(options.assetsDir, filePath)
-        : filePath;
-}
+    api.modifyChainWebpackPluginConfig(webpackChain => {
+        // TODO 补充基本配置
+        webpackChain = baseConfig(webpackChain);
+
+        webpackChain.target('node');
+        webpackChain.node.set('__dirname', false);
+        webpackChain.node.set('__filename', false);
+
+        const options = api.serverConfig || {};
+
+        // entry
+        const entry = createTempConfigEntry(api);
+        Object.keys(entry).forEach(key => {
+            webpackChain.entry(key).merge(entry[key]);
+        });
+
+        const outputFilename = 'plugin/[name].js';
+
+        // output
+        options.outputDir = options.outputDir || 'dist';
+        options.publicPath = options.publicPath || '/';
+
+        webpackChain
+            .context(api.root)
+            .output
+            .path(api.resolve(options.outputDir))
+            .filename(outputFilename)
+            .chunkFilename(outputFilename)
+            .publicPath(options.publicPath)
+            .libraryTarget('umd')
+            .end();
+
+
+        const alias = options.resolveShared || {};
+        // alias
+        webpackChain.resolve
+            .extensions
+            .merge([ '.mjs', '.js', '.json', '.wasm', '.node' ])
+            .end()
+            .alias
+            .merge(alias)
+            .end();
+
+        // 去除内置的工具库
+        webpackChain
+            .externals([
+                '@micro-app/core',
+                '@micro-app/cli',
+                '@micro-app/shared-utils',
+            ]);
+
+
+        return webpackChain;
+    });
+
+    // 通用基础配置
+    function baseConfig(webpackChain) {
+        const options = api.config || {};
+        const nodeModulesPaths = options.nodeModulesPaths || [];
+        const mode = api.mode;
+
+        if (isWebpack4()) {
+            webpackChain
+                .mode(mode);
+        }
+
+        webpackChain.resolve
+            .modules
+            .add('node_modules')
+            .add(api.resolve('node_modules'))
+            .merge(nodeModulesPaths)
+            .end();
+
+        webpackChain.resolveLoader
+            .modules
+            .add('node_modules')
+            .add(api.resolve('node_modules'))
+            .merge(nodeModulesPaths)
+            .end();
+
+        return webpackChain;
+    }
+};
 
 module.exports.configuration = {
     description: 'webpack 配置与基础配置参数统一',
 };
+
+function webpackVersion() {
+    const { tryRequire } = require('@micro-app/shared-utils');
+    const webpackPkgInfo = tryRequire('webpack/package.json');
+    const _webpackVersion = webpackPkgInfo && webpackPkgInfo.version || '3'; // 默认 3
+    return _webpackVersion;
+}
+
+function isWebpack4() {
+    const { semver } = require('@micro-app/shared-utils');
+    const _webpackVersion = webpackVersion();
+    // webpack 4
+    const _isWebpack4 = semver.satisfies(_webpackVersion, '>=4');
+    return _isWebpack4;
+}
+
+function createTempConfigEntry(api) {
+    const { fs, dedent } = require('@micro-app/shared-utils');
+    const hash = require('hash-sum');
+    const path = require('path');
+    const tempDir = api.tempDir;
+    const pluginsDir = path.resolve(tempDir, 'plugins');
+    fs.ensureDirSync(pluginsDir);
+    const allplugins = api.service.plugins;
+    const filterPlugins = [];
+
+    const builtInFlag = Symbol.for('built-in');
+    allplugins.forEach(plugin => {
+        const id = plugin.id;
+        const flag = plugin[builtInFlag];
+        if (id.startsWith('built-in:') || flag
+        || id.startsWith('cli:') // TODO 可删除
+        ) {
+            return;
+        }
+        const link = plugin.link;
+        if (!filterPlugins.some(item => (item.id === id && item.link === link))) {
+            filterPlugins.push(plugin);
+        }
+    });
+    const aliasPlugins = filterPlugins.map(plugin => {
+        const id = plugin.id;
+        const link = plugin.link;
+        const aliasKey = hash(`${id}_${link}`);
+        return {
+            id, link, aliasKey,
+        };
+    });
+    // TODO __dirname 引用有问题，需要优化。server 参数需要优化
+    const entryTexts = [ ];
+    aliasPlugins.forEach(({ id, link, aliasKey }) => {
+        const tempIndex = path.resolve(pluginsDir, `${aliasKey}.js`);
+        // 创建临时文件
+        fs.writeFileSync(tempIndex, dedent`
+            'use strict';
+            module.exports = require('${link}');
+        `);
+        // entryTexts.push(`{id:"${id}", link: '${link}'}`);
+        entryTexts.push(`{id:"${id}", link: path.resolve(__dirname, '${aliasKey}')}`);
+    });
+    const entryIndex = path.resolve(pluginsDir, 'main.js');
+    const plugins = `[${entryTexts.join(',\n')}]`;
+    fs.writeFileSync(entryIndex, dedent`
+        'use strict';
+        const path = require('path');
+        module.exports = {
+            name: 'temp',
+            description: '模拟配置文件',
+            version: '${api.version}',
+            plugins: ${plugins},
+            server: ${JSON.stringify(api.serverConfig || {})},
+    };`);
+    return {
+        ...aliasPlugins.reduce((obj, { link, aliasKey }) => {
+            if (aliasKey) {
+                obj[aliasKey] = [ link ];
+            }
+            return obj;
+        }, {}),
+        'micro-app.config': [ entryIndex ],
+    };
+}
