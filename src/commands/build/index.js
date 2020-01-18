@@ -43,7 +43,7 @@ Examples:
             }
         }
 
-        const mode = api.mode;
+        const mode = args.mode || api.mode;
 
         const webpack = tryRequire('webpack');
         if (!webpack) {

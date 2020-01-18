@@ -1,4 +1,9 @@
 'use strict';
+
+const defaults = {
+    target: 'app',
+};
+
 module.exports = function inspectCommand(api, opts) {
 
     const chalk = require('chalk');
@@ -17,6 +22,7 @@ module.exports = function inspectCommand(api, opts) {
             '--rules': 'list all module rule names',
             '--plugins': 'list all plugin names',
             '--verbose': 'show full function definitions in output',
+            '--target': `app | lib | plugin (default: ${defaults.target})`,
         },
         details: `
 Examples:
@@ -27,16 +33,29 @@ Examples:
             `.trim(),
     },
     args => {
+
+        // TODO 兼容, 下个版本删除
+        if (args.t && !args.type) {
+            args.type = args.t;
+            logger.warn('you should be use "--type <type>"!!!');
+        }
+
+        for (const key in defaults) {
+            if (args[key] == null) {
+                args[key] = defaults[key];
+            }
+        }
+
         const { toString } = require('webpack-chain');
         const { highlight } = require('cli-highlight');
-
-        const { _: paths, verbose } = args;
 
         const webpackConfig = api.resolveWebpackConfig({
             target: args.target,
         });
 
         const config = _.cloneDeep(webpackConfig);
+
+        const { _: paths, verbose } = args;
 
         let res;
         let hasUnnamedRule;
