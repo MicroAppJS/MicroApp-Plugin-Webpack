@@ -7,117 +7,119 @@ const defaults = {
 
 module.exports = function buildCommand(api, opts) {
 
-    const { tryRequire, chalk, fs } = require('@micro-app/shared-utils');
+    const { tryRequire, chalk, fs, _ } = require('@micro-app/shared-utils');
 
     const registerMethods = require('./methods');
     registerMethods(api);
 
-    // start
-    api.registerCommand('build', {
-        description: 'build for production',
-        usage: 'micro-app build [options]',
-        options: {
-            '--mode': 'specify env mode (default: development)',
-            '--type <type>': 'adapter type, eg. [ webpack, etc. ].',
+    api.changeCommandOption('build', oldOpts => {
+        const newOpts = _.cloneDeep(oldOpts);
+        Object.assign(newOpts.options, {
             '--dest': 'specify output directory',
+            '--watch': 'watch for changes',
             '--clean': 'remove the dist directory before building the project',
             '--target': `app | lib | plugin (default: ${defaults.target})`,
-        },
-        details: `
-Examples:
-    ${chalk.gray('# watch')}
-    micro-app build --watch
-            `.trim(),
-    }, async args => {
+        });
+        return newOpts;
+    });
+
+    api.modifyCreateBuildProcess(() => {
+        const path = require('path');
+
         const logger = api.logger;
-
-        // TODO 兼容, 下个版本删除
-        if (args.t && !args.type) {
-            args.type = args.t;
-            logger.warn('you should be use "--type <type>"!!!');
-        }
-
-        for (const key in defaults) {
-            if (args[key] == null) {
-                args[key] = defaults[key];
-            }
-        }
-
-        const mode = args.mode || api.mode;
 
         const webpack = tryRequire('webpack');
         if (!webpack) {
             logger.throw('[build]', 'Not Found "webpack"!');
         }
 
-        const options = api.config || {};
+        const modifyConfig = (config, fn) => {
+            if (Array.isArray(config)) {
+                config.forEach(c => fn(c));
+            } else {
+                fn(config);
+            }
+        };
 
-        api.applyPluginHooks('beforeBuild', { args });
+        return async function({ args }) {
 
-        const webpackConfig = api.resolveWebpackConfig({
-            target: args.target,
-        });
+            for (const key in defaults) {
+                if (args[key] == null) {
+                    args[key] = defaults[key];
+                }
+            }
 
-        if (args.dest) {
-            // Override outputDir before resolving webpack config as config relies on it (#2327)
-            options.outputDir = args.dest;
-        }
+            const options = api.config || {};
 
-        const path = require('path');
+            const webpackConfig = api.resolveWebpackConfig({
+                target: args.target,
+            });
 
-        const targetDir = api.resolve(options.outputDir);
+            if (args.watch) {
+                modifyConfig(webpackConfig, config => {
+                    config.watch = true;
+                });
+            }
 
-        const spinner = logger.spinner(`Building for ${mode}...`);
+            if (args.dest) {
+                // Override outputDir before resolving webpack config as config relies on it (#2327)
+                options.outputDir = args.dest;
+            }
 
-        if (args.clean) {
-            await fs.remove(targetDir);
-        }
+            const targetDir = api.resolve(options.outputDir);
 
-        return new Promise((resolve, reject) => {
+            const mode = args.mode || api.mode;
+            const spinner = logger.spinner(`Building for ${mode}...`);
+
+            if (args.clean) {
+                await fs.remove(targetDir);
+            }
+
             spinner.start();
-            webpack(webpackConfig, (err, stats) => {
+            return new Promise((resolve, reject) => {
+                webpack(webpackConfig, (err, stats) => {
 
-                api.applyPluginHooks('afterBuild', { args });
-                spinner.info('Build Done');
+                    spinner.info('Build Done');
 
-                if (err) {
-                    // 在这里处理错误
-                    api.applyPluginHooks('onBuildFail', { err, args });
-                    return reject(err);
-                }
+                    if (err) {
+                        // 在这里处理错误
+                        api.applyPluginHooks('onBuildFail', { err, args });
+                        return reject(err);
+                    }
 
-                if (stats.hasErrors()) {
-                    // 在这里处理错误
-                    api.applyPluginHooks('onBuildFail', { stats, args });
-                    // console.warn(stats);
-                    return reject('Build failed with errors.');
-                }
+                    if (stats.hasErrors()) {
+                        // 在这里处理错误
+                        api.applyPluginHooks('onBuildFail', { stats, args });
+                        // console.warn(stats);
+                        return reject('Build failed with errors.');
+                    }
 
-                if (!args.silent) {
-                    const targetDirShort = path.relative(api.root, targetDir);
+                    if (!args.silent) {
+                        const targetDirShort = path.relative(api.root, targetDir);
 
-                    const formatStats = require('./formatStats');
-                    logger.info(formatStats(stats, targetDirShort, api));
+                        const formatStats = require('./formatStats');
+                        logger.info(formatStats(stats, targetDirShort, api));
 
-                    if (args.target === 'app') {
-                        if (!args.watch) {
-                            logger.success(`Build complete. The ${chalk.cyan(targetDirShort)} directory is ready to be deployed.`);
-                        } else {
-                            logger.success('Build complete. Watching for changes...');
+                        if (args.target === 'app') {
+                            if (!args.watch) {
+                                logger.success(`Build complete. The ${chalk.cyan(targetDirShort)} directory is ready to be deployed.`);
+                            } else {
+                                logger.success('Build complete. Watching for changes...');
+                            }
                         }
                     }
-                }
 
+                    // 处理完成
+                    resolve();
+                });
+            }).then(() => {
+                spinner.stop();
                 api.applyPluginHooks('onBuildSuccess', { args });
-
-                // 处理完成
-                resolve();
+            }).catch(err => {
+                spinner.stop();
+                throw err;
             });
-        }).then(() => {
-            api.logger.success('>>> Build Success !!!');
-        }).catch(e => {
-            api.logger.error('>>> Build Error >>>', e);
-        });
+        };
     });
 };
 
