@@ -47,7 +47,7 @@
         "@micro-app/cli": ">=0.3.0"
     },
     "devDependencies": {
-        "@micro-app/cli": "^0.3.0-alpha.4",
+        "@micro-app/cli": "^0.3.0-alpha.5",
         "@types/jest": "^24.0.19",
         "babel-eslint": "^10.0.3",
         "coveralls": "^3.0.7",
@@ -61,7 +61,7 @@
         "webpack-dev-server": "^3.9.0"
     },
     "dependencies": {
-        "@micro-app/shared-utils": "^0.1.8",
+        "@micro-app/shared-utils": "^0.1.14",
         "address": "^1.1.2",
         "cli-highlight": "^2.1.4",
         "clipboardy": "^2.1.0",

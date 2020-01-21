@@ -4,7 +4,7 @@ module.exports = function unifiedExtend(api, opts) {
 
     api.assertVersion('>=0.3.0');
 
-    const { tryRequire, fs } = require('@micro-app/shared-utils');
+    const { tryRequire } = require('@micro-app/shared-utils');
 
     api.modifyChainWebpackConfig(webpackChain => {
         webpackChain = baseConfig(webpackChain);
@@ -91,12 +91,6 @@ module.exports = function unifiedExtend(api, opts) {
 
         const options = api.serverConfig || {};
 
-        // entry
-        const entry = createTempConfigEntry(api);
-        Object.keys(entry).forEach(key => {
-            webpackChain.entry(key).merge(entry[key]);
-        });
-
         const outputFilename = 'plugin/[name].js';
 
         // output
@@ -182,71 +176,4 @@ function isWebpack4() {
     // webpack 4
     const _isWebpack4 = semver.satisfies(_webpackVersion, '>=4');
     return _isWebpack4;
-}
-
-function createTempConfigEntry(api) {
-    const { fs, dedent } = require('@micro-app/shared-utils');
-    const hash = require('hash-sum');
-    const path = require('path');
-    const tempDir = api.tempDir;
-    const pluginsDir = path.resolve(tempDir, 'plugins');
-    fs.ensureDirSync(pluginsDir);
-    const allplugins = api.service.plugins;
-    const filterPlugins = [];
-
-    const builtInFlag = Symbol.for('built-in');
-    allplugins.forEach(plugin => {
-        const id = plugin.id;
-        const flag = plugin[builtInFlag];
-        if (id.startsWith('built-in:') || flag
-        || id.startsWith('cli:') // TODO 可删除
-        ) {
-            return;
-        }
-        const link = plugin.link;
-        if (!filterPlugins.some(item => (item.id === id && item.link === link))) {
-            filterPlugins.push(plugin);
-        }
-    });
-    const aliasPlugins = filterPlugins.map(plugin => {
-        const id = plugin.id;
-        const link = plugin.link;
-        const aliasKey = hash(`${id}_${link}`);
-        return {
-            id, link, aliasKey,
-        };
-    });
-    // TODO __dirname 引用有问题，需要优化。server 参数需要优化
-    const entryTexts = [ ];
-    aliasPlugins.forEach(({ id, link, aliasKey }) => {
-        const tempIndex = path.resolve(pluginsDir, `${aliasKey}.js`);
-        // 创建临时文件
-        fs.writeFileSync(tempIndex, dedent`
-            'use strict';
-            module.exports = require('${link}');
-        `);
-        // entryTexts.push(`{id:"${id}", link: '${link}'}`);
-        entryTexts.push(`{id:"${id}", link: path.resolve(__dirname, '${aliasKey}')}`);
-    });
-    const entryIndex = path.resolve(pluginsDir, 'main.js');
-    const plugins = `[${entryTexts.join(',\n')}]`;
-    fs.writeFileSync(entryIndex, dedent`
-        'use strict';
-        const path = require('path');
-        module.exports = {
-            name: 'temp',
-            description: '模拟配置文件',
-            version: '${api.version}',
-            plugins: ${plugins},
-            server: ${JSON.stringify(api.serverConfig || {})},
-    };`);
-    return {
-        ...aliasPlugins.reduce((obj, { link, aliasKey }) => {
-            if (aliasKey) {
-                obj[aliasKey] = [ link ];
-            }
-            return obj;
-        }, {}),
-        'micro-app.config': [ entryIndex ],
-    };
 }
