@@ -226,7 +226,7 @@ module.exports = function serveCommand(api, opts) {
                 before(app, server) {
                     // launch editor support.
                     // this works with vue-devtools & @vue/cli-overlay
-                    app.use('/__open-in-editor', launchEditorMiddleware(() => console.log(
+                    app.use('/__open-in-editor', launchEditorMiddleware(() => logger.info(
                         'To specify an editor, specify the EDITOR env variable or ' +
             'add "editor" field to your Vue project config.\n'
                     )));
@@ -290,26 +290,26 @@ module.exports = function serveCommand(api, opts) {
                         ? publicUrl.replace(/([^/])$/, '$1/')
                         : urls.lanUrlForTerminal;
 
-                    console.log();
+                    logger.info();
                     logger.info('  App running at:');
                     logger.info(`  - Local:   ${chalk.cyan(urls.localUrlForTerminal)} ${copied}`);
                     if (!isInContainer) {
                         logger.info(`  - Network: ${chalk.cyan(networkUrl)}`);
                     } else {
-                        console.log();
+                        logger.info();
                         logger.warn('  It seems you are running Vue CLI inside a container.');
                         if (!publicUrl && options.publicPath && options.publicPath !== '/') {
-                            console.log();
+                            logger.info();
                             logger.warn('  Since you are using a non-root publicPath, the hot-reload socket');
                             logger.warn('  will not be able to infer the correct URL to connect. You should');
                             logger.warn(`  explicitly specify the URL via ${chalk.blue('devServer.public')}.`);
-                            console.log();
+                            logger.info();
                         }
                         logger.warn(`  Access the dev server via ${chalk.cyan(
                             `${protocol}://localhost:<your container's external mapped port>${options.publicPath}`
                         )}`);
                     }
-                    console.log();
+                    logger.info();
 
                     if (isFirstCompile) {
                         isFirstCompile = false;
@@ -322,7 +322,7 @@ module.exports = function serveCommand(api, opts) {
                             logger.info('  App is served in production mode.');
                             logger.info('  Note this is for preview or E2E testing only.');
                         }
-                        console.log();
+                        logger.info();
 
                         if (args.open || projectDevServerOptions.open) {
                             const pageUri = (projectDevServerOptions.openPage && typeof projectDevServerOptions.openPage === 'string')
