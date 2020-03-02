@@ -5,7 +5,6 @@ const extendConfigs = [
     'enhance',
     'unified/base',
     'unified/prod',
-    'unified/plugin',
 ];
 
 const commands = [

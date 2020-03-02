@@ -1,26 +1,29 @@
 'use strict';
 
+const path = require('path');
+
 const config = {
     name: '@micro-app/demo',
     description: '',
     version: '0.0.1',
     type: '', // types 类型
-    webpack: { // webpack 配置 (只有自己使用)
-        // output: {
-        //     path: require('path').resolve(__dirname, 'public'),
-        //     publicPath: '/public/',
-        // },
-    },
+    webpack: { }, // webpack 配置 (只有自己使用)
 
     entry: {
-        main: './test/index.js',
+        main: './simple/client/main.js',
     },
 
     htmls: [
         {
-            template: './test/index.js',
+            filename: 'index.html',
+            hash: true,
+            chunks: [ 'common', 'main' ],
+            template: './simple/client/index.html',
         },
     ],
+
+    outputDir: path.resolve(__dirname, 'dist'),
+    // publicPath: '/',
 
     // staticPath: '',
 
@@ -29,6 +32,8 @@ const config = {
     //         context: __dirname,
     //     },
     // ],
+
+    // devServer: {},
 
     alias: { // 前端
         api: 'abc',
@@ -56,6 +61,8 @@ const config = {
 
 config.plugins = [
     __dirname,
+    '@micro-app/plugin-compatible',
+    '@micro-app/plugin-deploy', // test
 ];
 
 module.exports = config;

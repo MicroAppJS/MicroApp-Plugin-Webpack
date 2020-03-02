@@ -4,13 +4,15 @@
 
 describe('Command serve', () => {
 
-    let PORTS = 10000;
+    let PORTS = 20000;
     function getArgvs() {
         const port = PORTS++;
         return { _: [], port };
     }
 
     it('init run', async () => {
+
+        process.env.NODE_ENV = 'development';
 
         const { service } = require('@micro-app/cli');
 
@@ -30,6 +32,8 @@ describe('Command serve', () => {
     });
 
     it('register methods', async () => {
+
+        process.env.NODE_ENV = 'development';
 
         const { service } = require('@micro-app/cli');
 
@@ -109,6 +113,8 @@ describe('Command serve', () => {
 
     it('register dev methods', async () => {
 
+        process.env.NODE_ENV = 'development';
+
         const { service } = require('@micro-app/cli');
 
         const plugin = service.plugins.find(item => item.id === 'cli:plugin-command-serve');
@@ -137,6 +143,8 @@ describe('Command serve', () => {
     });
 
     it('global cmd config', async () => {
+
+        process.env.NODE_ENV = 'development';
 
         const { service } = require('@micro-app/cli');
 

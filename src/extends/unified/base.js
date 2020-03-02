@@ -30,9 +30,15 @@ module.exports = function unifiedExtend(api, opts) {
             .output
             .path(api.resolve(options.outputDir))
             .filename(outputFilename)
-            .chunkFilename(outputFilename)
             .publicPath(options.publicPath)
             .end();
+
+        if (isWebpack4()) {
+            webpackChain
+                .output
+                .chunkFilename(outputFilename)
+                .end();
+        }
 
         const alias = options.resolveAlias || {};
         // alias
@@ -77,55 +83,6 @@ module.exports = function unifiedExtend(api, opts) {
             }
             publicCopyIgnore.push(...pageHtmlOptions.map(opts => opts.template));
         });
-
-        return webpackChain;
-    });
-
-    api.modifyChainWebpackPluginConfig(webpackChain => {
-        // TODO 补充基本配置
-        webpackChain = baseConfig(webpackChain);
-
-        webpackChain.target('node');
-        webpackChain.node.set('__dirname', false);
-        webpackChain.node.set('__filename', false);
-
-        const options = api.serverConfig || {};
-
-        const outputFilename = 'plugin/[name].js';
-
-        // output
-        options.outputDir = options.outputDir || 'dist';
-        options.publicPath = options.publicPath || '/';
-
-        webpackChain
-            .context(api.root)
-            .output
-            .path(api.resolve(options.outputDir))
-            .filename(outputFilename)
-            .chunkFilename(outputFilename)
-            .publicPath(options.publicPath)
-            .libraryTarget('umd')
-            .end();
-
-
-        const alias = options.resolveShared || {};
-        // alias
-        webpackChain.resolve
-            .extensions
-            .merge([ '.mjs', '.js', '.json', '.wasm', '.node' ])
-            .end()
-            .alias
-            .merge(alias)
-            .end();
-
-        // 去除内置的工具库
-        webpackChain
-            .externals([
-                '@micro-app/core',
-                '@micro-app/cli',
-                '@micro-app/shared-utils',
-            ]);
-
 
         return webpackChain;
     });

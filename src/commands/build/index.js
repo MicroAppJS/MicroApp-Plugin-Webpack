@@ -15,8 +15,6 @@ module.exports = function buildCommand(api, opts) {
     api.changeCommandOption('build', oldOpts => {
         const newOpts = _.cloneDeep(oldOpts);
         Object.assign(newOpts.options, {
-            '--dest': 'specify output directory',
-            '--watch': 'watch for changes',
             '--clean': 'remove the dist directory before building the project',
             '--target': `app | lib | plugin (default: ${defaults.target})`,
         });
@@ -32,6 +30,8 @@ module.exports = function buildCommand(api, opts) {
         if (!webpack) {
             logger.throw('[build]', 'Not Found "webpack"!');
         }
+
+        const validateWebpackConfig = require('../../utils/validateWebpackConfig');
 
         const modifyConfig = (config, fn) => {
             if (Array.isArray(config)) {
@@ -55,16 +55,8 @@ module.exports = function buildCommand(api, opts) {
                 target: args.target,
             });
 
-            if (args.watch) {
-                modifyConfig(webpackConfig, config => {
-                    config.watch = true;
-                });
-            }
-
-            if (args.dest) {
-                // Override outputDir before resolving webpack config as config relies on it (#2327)
-                options.outputDir = args.dest;
-            }
+            // check for common config errors
+            validateWebpackConfig(webpackConfig, api, options, args.target);
 
             const targetDir = api.resolve(options.outputDir);
 
@@ -90,7 +82,10 @@ module.exports = function buildCommand(api, opts) {
                     if (stats.hasErrors()) {
                         // 在这里处理错误
                         api.applyPluginHooks('onBuildFail', { stats, args });
-                        // console.warn(stats);
+                        console.warn(stats.toString({
+                            chunks: false, // Makes the build much quieter
+                            colors: true, // Shows colors in the console
+                        }));
                         return reject('Build failed with errors.');
                     }
 
@@ -101,11 +96,7 @@ module.exports = function buildCommand(api, opts) {
                         logger.info(formatStats(stats, targetDirShort, api));
 
                         if (args.target === 'app') {
-                            if (!args.watch) {
-                                logger.success(`Build complete. The ${chalk.cyan(targetDirShort)} directory is ready to be deployed.`);
-                            } else {
-                                logger.success('Build complete. Watching for changes...');
-                            }
+                            logger.success(`Build complete. The ${chalk.cyan(targetDirShort)} directory is ready to be deployed.`);
                         }
                     }
 

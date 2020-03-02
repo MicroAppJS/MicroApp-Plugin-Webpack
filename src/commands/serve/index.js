@@ -110,7 +110,7 @@ module.exports = function serveCommand(api, opts) {
             });
 
             // check for common config errors
-            validateWebpackConfig(webpackConfig, api, options);
+            validateWebpackConfig(webpackConfig, api, options, args.target);
 
             const root = api.root;
 
@@ -199,9 +199,12 @@ module.exports = function serveCommand(api, opts) {
             const contentBase = Array.isArray(options.staticPaths) ? (options.staticPaths.length ? options.staticPaths : false) : options.staticPaths || false;
 
             // create server
-            const server = new WebpackDevServer(compiler, Object.assign(isWebpackDevServer3 ? {
+            const _opts = Object.assign(isWebpackDevServer3 ? {
                 logLevel: 'silent',
-            } : {}, {
+                clientLogLevel: 'silent',
+            } : {
+                clientLogLevel: 'none',
+            }, {
                 clientLogLevel: 'silent',
                 historyApiFallback: {
                     disableDotRule: true,
@@ -243,7 +246,13 @@ module.exports = function serveCommand(api, opts) {
                 },
                 // avoid opening browser
                 open: false,
-            }));
+            });
+
+            // fixed
+            if (_opts.contentBase === false) {
+                delete _opts.contentBase;
+            }
+            const server = new WebpackDevServer(compiler, _opts);
 
             [ 'SIGINT', 'SIGTERM' ].forEach(signal => {
                 process.once(signal, () => {

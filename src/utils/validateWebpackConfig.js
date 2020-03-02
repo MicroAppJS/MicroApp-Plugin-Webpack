@@ -19,11 +19,13 @@ module.exports = function validateWebpackConfig(
         // this is not supported because there's no way for us to give copy
         // plugin the correct value this way.
         logger.warn('[validate]', 'outputDir:', options.outputDir, '!== output.path:', singleConfig.output.path);
-        logger.throw(
+        logger.error(
             'Configuration Error: ' +
             'Avoid modifying webpack output.path directly. ' +
             'Use the "outputDir" option instead.'
         );
+        // fixed
+        options.outputDir = singleConfig.output.path;
     }
 
     if (actualTargetDir === api.root) {
@@ -36,10 +38,12 @@ module.exports = function validateWebpackConfig(
 
     if (target === 'app' && singleConfig.output.publicPath !== options.publicPath) {
         logger.warn('[validate]', 'publicPath:', options.publicPath, '!== output.publicPath:', singleConfig.output.publicPath);
-        logger.throw(
+        logger.error(
             'Configuration Error: ' +
             'Avoid modifying webpack output.publicPath directly. ' +
             'Use the "publicPath" option instead.'
         );
+        // fixed
+        options.publicPath = singleConfig.output.publicPath;
     }
 };

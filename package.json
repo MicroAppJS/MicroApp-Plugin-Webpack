@@ -7,9 +7,17 @@
         "micro-app-build": "./bin/micro-app-build"
     },
     "scripts": {
+        "prepublishOnly": "npm run test",
         "lint": "eslint .",
         "lint:fix": "npm run lint -- --fix",
-        "test": "jest"
+        "test": "jest",
+        "build": "micro-app build",
+        "dev": "micro-app-dev",
+        "inspect": "micro-app inspect",
+        "publish:next": "npm publish --tag next",
+        "release": "micro-app release",
+        "release:alpha": "npm run release -- --preRelease=alpha",
+        "release:next": "npm run release -- --preRelease=next"
     },
     "files": [
         "bin",
@@ -44,30 +52,30 @@
         ]
     },
     "peerDependencies": {
-        "@micro-app/cli": ">=0.3.0"
+        "@micro-app/cli": ">=0.3.1"
     },
     "devDependencies": {
-        "@micro-app/cli": "^0.3.0-alpha.5",
-        "@types/jest": "^24.0.19",
-        "babel-eslint": "^10.0.3",
-        "coveralls": "^3.0.7",
+        "@micro-app/cli": "^0.3.1",
+        "@micro-app/plugin-compatible": "0.0.2",
+        "@types/jest": "^24.9.1",
+        "babel-eslint": "^10.1.0",
         "eslint": "^5.16.0",
         "eslint-config-2o3t": "^1.1.17",
-        "hash-sum": "^2.0.0",
-        "husky": "^3.0.9",
+        "html-webpack-plugin": "^3.2.0",
+        "husky": "^3.1.0",
         "jest": "^24.9.0",
-        "lint-staged": "^9.4.2",
+        "lint-staged": "^9.5.0",
         "webpack": "^4.41.1",
         "webpack-dev-server": "^3.9.0"
     },
     "dependencies": {
-        "@micro-app/shared-utils": "^0.1.14",
+        "@micro-app/shared-utils": "^0.1.15",
         "address": "^1.1.2",
         "cli-highlight": "^2.1.4",
-        "clipboardy": "^2.1.0",
+        "clipboardy": "^2.2.0",
         "default-gateway": "^5.0.5",
         "launch-editor-middleware": "^2.2.1",
         "portfinder": "^1.0.25",
-        "webpack-chain": "^6.0.0"
+        "webpack-chain": "^6.4.0"
     }
 }

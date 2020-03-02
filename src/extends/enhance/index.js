@@ -22,22 +22,15 @@ module.exports = function WebpackAdapter(api, opts) {
         }
 
         const webpackChainConfig = new Config();
-        let finalWebpackChainConfig = webpackChainConfig;
-        if (options && options.target === 'plugin') {
-            // TODO 针对所有 plugin 的配置进行处理
-            finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackPluginConfig', webpackChainConfig, options);
-            api.applyPluginHooks('onChainWebpcakPluginConfig', finalWebpackChainConfig);
-        } else {
-            const selfConfig = api.selfConfig || {};
-            const originalConfig = selfConfig.originalConfig || {};
-            const _originalWebpackConfig = _.cloneDeep(originalConfig.webpack || {});
-            delete _originalWebpackConfig.entry; // 不接受 entry, 内部已经做了兼容
-            delete _originalWebpackConfig.plugins; // 不接受 plugins
-            webpackChainConfig.merge(_originalWebpackConfig);
+        const selfConfig = api.selfConfig || {};
+        const originalConfig = selfConfig.originalConfig || {};
+        const _originalWebpackConfig = _.cloneDeep(originalConfig.webpack || {});
+        delete _originalWebpackConfig.entry; // 不接受 entry, 内部已经做了兼容
+        delete _originalWebpackConfig.plugins; // 不接受 plugins
+        webpackChainConfig.merge(_originalWebpackConfig);
 
-            finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig, options);
-            api.applyPluginHooks('onChainWebpcakConfig', finalWebpackChainConfig);
-        }
+        const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig, options);
+        api.applyPluginHooks('onChainWebpcakConfig', finalWebpackChainConfig);
 
         api.setState('webpackChainConfig', finalWebpackChainConfig);
         return finalWebpackChainConfig;
@@ -48,14 +41,10 @@ module.exports = function WebpackAdapter(api, opts) {
     }, options => {
         const finalWebpackChainConfig = api.resolveChainableWebpackConfig(options);
         const webpackConfig = finalWebpackChainConfig.toConfig();
-        if (options && options.target === 'plugin') {
-            api.applyPluginHooks('modifyWebpackPluginConfig', webpackConfig, options);
-        } else {
-            api.applyPluginHooks('modifyWebpackConfig', webpackConfig, options);
-        }
+        const finalWebpackConfig = api.applyPluginHooks('modifyWebpackConfig', webpackConfig, options);
 
-        api.setState('webpackConfig', webpackConfig);
-        return webpackConfig;
+        api.setState('webpackConfig', finalWebpackConfig);
+        return finalWebpackConfig;
     });
 
     api.onInitWillDone(() => {
