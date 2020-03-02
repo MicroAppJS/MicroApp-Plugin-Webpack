@@ -4,6 +4,8 @@ const extendConfigs = [
     'webpack',
     'enhance',
     'unified/base',
+    'unified/rules',
+    'unified/plugins',
     'unified/prod',
 ];
 

@@ -7,6 +7,36 @@ module.exports = function unifiedExtend(api, opts) {
     const { tryRequire } = require('@micro-app/shared-utils');
 
     api.modifyChainWebpackConfig(webpackChain => {
+        const { getAssetPath, isWebpack4 } = require('./utils');
+
+        // 通用基础配置
+        function baseConfig(webpackChain) {
+            const options = api.config || {};
+            const nodeModulesPaths = options.nodeModulesPaths || [];
+            const mode = api.mode;
+
+            if (isWebpack4()) {
+                webpackChain
+                    .mode(mode);
+            }
+
+            webpackChain.resolve
+                .modules
+                .add('node_modules')
+                .add(api.resolve('node_modules'))
+                .merge(nodeModulesPaths)
+                .end();
+
+            webpackChain.resolveLoader
+                .modules
+                .add('node_modules')
+                .add(api.resolve('node_modules'))
+                .merge(nodeModulesPaths)
+                .end();
+
+            return webpackChain;
+        }
+
         webpackChain = baseConfig(webpackChain);
 
         const options = api.config || {};
@@ -21,7 +51,6 @@ module.exports = function unifiedExtend(api, opts) {
         options.outputDir = webpackChain.output.get('path') || options.outputDir || 'dist';
         options.publicPath = webpackChain.output.get('publicPath') || options.publicPath || '/';
 
-        const getAssetPath = require('./utils/getAssetPath');
         const outputFilename = getAssetPath(options, 'js/[name].js');
 
         // output
@@ -44,7 +73,7 @@ module.exports = function unifiedExtend(api, opts) {
         // alias
         webpackChain.resolve
             .extensions
-            .merge([ '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm' ])
+            .merge([ '.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.wasm' ])
             .end()
             .alias
             .merge(alias)
@@ -86,51 +115,8 @@ module.exports = function unifiedExtend(api, opts) {
 
         return webpackChain;
     });
-
-    // 通用基础配置
-    function baseConfig(webpackChain) {
-        const options = api.config || {};
-        const nodeModulesPaths = options.nodeModulesPaths || [];
-        const mode = api.mode;
-
-        if (isWebpack4()) {
-            webpackChain
-                .mode(mode);
-        }
-
-        webpackChain.resolve
-            .modules
-            .add('node_modules')
-            .add(api.resolve('node_modules'))
-            .merge(nodeModulesPaths)
-            .end();
-
-        webpackChain.resolveLoader
-            .modules
-            .add('node_modules')
-            .add(api.resolve('node_modules'))
-            .merge(nodeModulesPaths)
-            .end();
-
-        return webpackChain;
-    }
 };
 
 module.exports.configuration = {
     description: 'webpack 配置与基础配置参数统一',
 };
-
-function webpackVersion() {
-    const { tryRequire } = require('@micro-app/shared-utils');
-    const webpackPkgInfo = tryRequire('webpack/package.json');
-    const _webpackVersion = webpackPkgInfo && webpackPkgInfo.version || '3'; // 默认 3
-    return _webpackVersion;
-}
-
-function isWebpack4() {
-    const { semver } = require('@micro-app/shared-utils');
-    const _webpackVersion = webpackVersion();
-    // webpack 4
-    const _isWebpack4 = semver.satisfies(_webpackVersion, '>=4');
-    return _isWebpack4;
-}

@@ -66,7 +66,6 @@ module.exports = function extendWebpack(api, opts) {
             outputDir: 'dist',
             publicPath: '/',
             assetsDir: '',
-            loaderOptions: {},
             devServer: {},
         };
         const otherConfig = Object.assign({ // default config
@@ -75,7 +74,6 @@ module.exports = function extendWebpack(api, opts) {
             'outputDir',
             'publicPath',
             'assetsDir',
-            'loaderOptions',
             'devServer',
         ]));
         // 校验

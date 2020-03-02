@@ -70,13 +70,20 @@
         "webpack-dev-server": "^3.9.0"
     },
     "dependencies": {
+        "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
         "@micro-app/shared-utils": "^0.1.15",
+        "@soda/friendly-errors-webpack-plugin": "^1.7.1",
         "address": "^1.1.2",
+        "case-sensitive-paths-webpack-plugin": "^2.3.0",
         "cli-highlight": "^2.1.4",
         "clipboardy": "^2.2.0",
         "default-gateway": "^5.0.5",
+        "file-loader": "^5.1.0",
         "launch-editor-middleware": "^2.2.1",
+        "node-loader": "^0.6.0",
         "portfinder": "^1.0.25",
+        "ts-loader": "^6.2.1",
+        "url-loader": "^3.0.0",
         "webpack-chain": "^6.4.0"
     }
 }
