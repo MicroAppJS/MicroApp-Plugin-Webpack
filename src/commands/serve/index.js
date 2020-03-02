@@ -252,6 +252,12 @@ module.exports = function serveCommand(api, opts) {
             if (_opts.contentBase === false) {
                 delete _opts.contentBase;
             }
+
+            if (process.env.MICRO_APP_TEST) { // test
+                api.logger.debug('MICRO_APP_TEST --> Exit!!!');
+                return Promise.resolve();
+            }
+
             const server = new WebpackDevServer(compiler, _opts);
 
             [ 'SIGINT', 'SIGTERM' ].forEach(signal => {
@@ -261,11 +267,6 @@ module.exports = function serveCommand(api, opts) {
                     });
                 });
             });
-
-            if (process.env.MICRO_APP_TEST) {
-                api.logger.debug('MICRO_APP_TEST --> Exit!!!');
-                return Promise.resolve();
-            }
 
             return new Promise((resolve, reject) => {
                 spinner.start();
