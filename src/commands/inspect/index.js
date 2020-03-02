@@ -53,6 +53,11 @@ Examples:
             target: args.target,
         });
 
+        if (process.env.MICRO_APP_TEST) {
+            api.logger.debug('MICRO_APP_TEST --> Exit!!!');
+            return webpackConfig;
+        }
+
         const config = _.cloneDeep(webpackConfig);
 
         const { _: paths, verbose } = args;
