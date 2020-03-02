@@ -262,6 +262,11 @@ module.exports = function serveCommand(api, opts) {
                 });
             });
 
+            if (process.env.MICRO_APP_TEST) {
+                api.logger.debug('MICRO_APP_TEST --> Exit!!!');
+                return Promise.resolve();
+            }
+
             return new Promise((resolve, reject) => {
                 spinner.start();
 

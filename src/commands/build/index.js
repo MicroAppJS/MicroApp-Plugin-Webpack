@@ -67,6 +67,11 @@ module.exports = function buildCommand(api, opts) {
                 await fs.remove(targetDir);
             }
 
+            if (process.env.MICRO_APP_TEST) {
+                api.logger.debug('MICRO_APP_TEST --> Exit!!!');
+                return Promise.resolve();
+            }
+
             spinner.start();
             return new Promise((resolve, reject) => {
                 webpack(webpackConfig, (err, stats) => {
