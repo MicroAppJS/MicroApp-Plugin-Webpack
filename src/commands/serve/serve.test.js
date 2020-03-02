@@ -1,7 +1,5 @@
 'use strict';
 
-process.env.MICRO_APP_TEST = 'true';
-
 /* global expect */
 
 describe('Command serve', () => {

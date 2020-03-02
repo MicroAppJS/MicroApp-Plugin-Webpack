@@ -32,6 +32,8 @@ jobs:
               run: |
                   yarn add -D coveralls
                   yarn run test --coverage && cat ./coverage/lcov.info
+              env:
+                  MICRO_APP_TEST: true
 
             - name: Coveralls
               uses: coverallsapp/github-action@master
