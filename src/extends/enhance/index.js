@@ -29,6 +29,10 @@ module.exports = function WebpackAdapter(api, opts) {
         delete _originalWebpackConfig.plugins; // 不接受 plugins
         webpackChainConfig.merge(_originalWebpackConfig);
 
+        if (options.target) { // target, 默认 web
+            webpackChainConfig.target(options.target);
+        }
+
         const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig, options);
         api.applyPluginHooks('onChainWebpcakConfig', finalWebpackChainConfig);
 

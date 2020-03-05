@@ -4,7 +4,7 @@ module.exports = function validateWebpackConfig(
     webpackConfig,
     api,
     options,
-    target = 'app'
+    target = 'web'
 ) {
     const logger = api.logger;
 
@@ -36,7 +36,7 @@ module.exports = function validateWebpackConfig(
         );
     }
 
-    if (target === 'app' && singleConfig.output.publicPath !== options.publicPath) {
+    if (singleConfig.output.publicPath !== options.publicPath) {
         logger.warn('[validate]', 'publicPath:', options.publicPath, '!== output.publicPath:', singleConfig.output.publicPath);
         logger.error(
             'Configuration Error: ' +

@@ -54,10 +54,10 @@ module.exports = function unifiedExtend(api, opts) {
         }
 
         // copy static
-        const COPYPlugin = tryRequire('copy-webpack-plugin');
-        if (COPYPlugin) {
-            const staticPaths = (options.staticPaths || []).filter(item => fs.existsSync(item));
-            if (staticPaths.length) {
+        const staticPaths = (options.staticPaths || []).filter(item => fs.existsSync(item));
+        if (staticPaths.length) {
+            const COPYPlugin = tryRequire('copy-webpack-plugin');
+            if (COPYPlugin) {
                 webpackChain
                     .plugin('copy')
                     .use(COPYPlugin, [ staticPaths.map(publicDir => {
@@ -68,8 +68,24 @@ module.exports = function unifiedExtend(api, opts) {
                             ignore: publicCopyIgnore,
                         };
                     }) ]);
+            } else {
+                api.logger.warn('[webpack]', 'Not Found "copy-webpack-plugin"');
             }
         }
+
+
+        const TerserPlugin = require('terser-webpack-plugin');
+        webpackChain.optimization
+            .minimizer('terser')
+            .use(TerserPlugin, [ require('./utils/terserOptions') ]);
+
+
+        // keep module.id stable when vendor modules does not change
+        webpackChain
+            .plugin('hash-module-ids')
+            .use(require('webpack/lib/HashedModuleIdsPlugin'), [{
+                hashDigest: 'hex',
+            }]);
 
         return webpackChain;
     });
