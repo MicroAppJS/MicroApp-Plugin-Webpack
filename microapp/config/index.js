@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const ROOT = path.resolve(__dirname, '../../');
 
 const config = {
     name: '@micro-app/demo',
@@ -22,7 +23,7 @@ const config = {
         },
     ],
 
-    outputDir: path.resolve(__dirname, 'dist'),
+    outputDir: path.resolve(ROOT, 'dist'),
     // publicPath: '/',
 
     // staticPath: '',
@@ -60,7 +61,7 @@ const config = {
 
 
 config.plugins = [
-    path.resolve(__dirname, '../../'),
+    ROOT,
 ];
 
 if (process.env.NODE_ENV === 'test') {
