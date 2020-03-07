@@ -60,9 +60,14 @@ const config = {
 
 
 config.plugins = [
-    __dirname,
-    '@micro-app/plugin-compatible',
-    '@micro-app/plugin-deploy', // test
+    path.resolve(__dirname, '../../'),
 ];
+
+if (process.env.NODE_ENV === 'test') {
+    config.plugins.push(...[
+        '@micro-app/plugin-compatible',
+        '@micro-app/plugin-deploy', // test
+    ]);
+}
 
 module.exports = config;

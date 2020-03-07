@@ -2,6 +2,7 @@
 
 const defaults = {
     target: 'app',
+    index: 0,
 };
 
 module.exports = function inspectCommand(api, opts) {
@@ -22,6 +23,7 @@ module.exports = function inspectCommand(api, opts) {
             '--rules': 'list all module rule names',
             '--plugins': 'list all plugin names',
             '--verbose': 'show full function definitions in output',
+            '--index': 'select config by index (default: 0)',
             '--target': `app | lib | plugin (default: ${defaults.target})`,
         },
         details: `
@@ -58,7 +60,10 @@ Examples:
             return webpackConfig;
         }
 
-        const config = _.cloneDeep(webpackConfig);
+        let config = webpackConfig;
+        if (Array.isArray(config)) {
+            config = config[args.index || 0];
+        }
 
         const { _: paths, verbose } = args;
 

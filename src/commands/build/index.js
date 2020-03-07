@@ -2,7 +2,7 @@
 
 const defaults = {
     clean: false,
-    target: 'app',
+    target: 'web',
 };
 
 module.exports = function buildCommand(api, opts) {
@@ -16,7 +16,7 @@ module.exports = function buildCommand(api, opts) {
         const newOpts = _.cloneDeep(oldOpts);
         Object.assign(newOpts.options, {
             '--clean': 'remove the dist directory before building the project',
-            '--target': `app | lib | plugin (default: ${defaults.target})`,
+            '--target': `web | node (default: ${defaults.target})`,
         });
         return newOpts;
     });
@@ -32,14 +32,6 @@ module.exports = function buildCommand(api, opts) {
         }
 
         const validateWebpackConfig = require('../../utils/validateWebpackConfig');
-
-        const modifyConfig = (config, fn) => {
-            if (Array.isArray(config)) {
-                config.forEach(c => fn(c));
-            } else {
-                fn(config);
-            }
-        };
 
         return async function({ args }) {
 
@@ -100,9 +92,7 @@ module.exports = function buildCommand(api, opts) {
                         const formatStats = require('./formatStats');
                         logger.info(formatStats(stats, targetDirShort, api));
 
-                        if (args.target === 'app') {
-                            logger.success(`Build complete. The ${chalk.cyan(targetDirShort)} directory is ready to be deployed.`);
-                        }
+                        logger.success(`Build complete. The ${chalk.cyan(targetDirShort)} directory is ready to be deployed.`);
                     }
 
                     // 处理完成

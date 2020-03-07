@@ -11,11 +11,21 @@ module.exports = function serveCommand(api, opts) {
     const registerMethods = require('./methods');
     registerMethods(api);
 
+    const { _, tryRequire, chalk, openBrowser, Env, semver } = require('@micro-app/shared-utils');
+
     const logger = api.logger;
+
+    api.changeCommandOption('serve', oldOpts => {
+        const newOpts = _.cloneDeep(oldOpts);
+        Object.assign(newOpts.options, {
+            '--index': 'select config by index (default: 0)',
+            '--target': `web | node (default: ${defaults.target})`,
+        });
+        return newOpts;
+    });
 
     api.modifyCreateDevServer(() => {
 
-        const { _, tryRequire, chalk, openBrowser, Env, semver } = require('@micro-app/shared-utils');
         const url = require('url');
         const launchEditorMiddleware = require('launch-editor-middleware');
         const portfinder = require('portfinder');
@@ -52,6 +62,14 @@ module.exports = function serveCommand(api, opts) {
             const options = api.config || {};
 
             const spinner = logger.spinner(`Starting for ${mode}...`);
+
+            // 多 config 选择
+            const selectModifyConfig = config => {
+                if (Array.isArray(config)) {
+                    config[args.index || 0];
+                }
+                return config;
+            };
 
             // configs that only matters for dev server
             api.modifyChainWebpackConfig(webpackChain => {
@@ -112,19 +130,19 @@ module.exports = function serveCommand(api, opts) {
             // check for common config errors
             validateWebpackConfig(webpackConfig, api, options, args.target);
 
-            const root = api.root;
+            const config = selectModifyConfig(webpackConfig);
 
             // load user devServer options with higher priority than devServer
             // in webpack config
             const projectDevServerOptions = Object.assign(
-                webpackConfig.devServer || {},
+                config.devServer || {},
                 options.devServer || {}
             );
 
             // entry arg
             const entry = args.entry;
             if (entry && _.isString(entry)) {
-                webpackConfig.entry = {
+                config.entry = {
                     app: api.resolve(entry),
                 };
             }
@@ -161,13 +179,13 @@ module.exports = function serveCommand(api, opts) {
             // inject dev & hot-reload middleware entries
             if (!isProduction) {
                 const sockjsUrl = publicUrl
-                // explicitly configured via devServer.public
+                    // explicitly configured via devServer.public
                     ? `?${publicUrl}/sockjs-node`
                     : isInContainer
-                    // can't infer public network url if inside a container...
-                    // use client-side inference (note this would break with non-root publicPath)
+                        // can't infer public network url if inside a container...
+                        // use client-side inference (note this would break with non-root publicPath)
                         ? ''
-                    // otherwise infer the url
+                        // otherwise infer the url
                         : '?' + url.format({
                             protocol,
                             port,
@@ -188,7 +206,7 @@ module.exports = function serveCommand(api, opts) {
                     devClients.push('webpack/hot/poll?500');
                 }
                 // inject dev/hot client
-                addDevClientToEntry(webpackConfig, devClients);
+                addDevClientToEntry(config, devClients);
             }
 
             // create compiler
@@ -267,6 +285,8 @@ module.exports = function serveCommand(api, opts) {
                     });
                 });
             });
+
+            const root = api.root;
 
             return new Promise((resolve, reject) => {
                 spinner.start();

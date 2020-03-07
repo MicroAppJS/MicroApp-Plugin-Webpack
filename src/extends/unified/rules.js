@@ -7,7 +7,7 @@ module.exports = function unifiedExtend(api, opts) {
     const { tryRequire } = require('@micro-app/shared-utils');
 
     api.modifyChainWebpackConfig(webpackChain => {
-        const { getAssetPath } = require('./utils');
+        const { getAssetPath, isWebpack4 } = require('./utils');
 
         const options = api.config || {};
 
@@ -92,15 +92,30 @@ module.exports = function unifiedExtend(api, opts) {
                 outputAssetBase: 'native_modules',
             });
 
+        let ForkTsCheckerWebpackPlugin = null;
+        if (isWebpack4()) {
+            // 在单独的进程上运行TypeScript类型检查器的Webpack插件。
+            ForkTsCheckerWebpackPlugin = tryRequire('fork-ts-checker-webpack-plugin');
+            if (!ForkTsCheckerWebpackPlugin) {
+                api.logger.warn('[webpack]', 'Not Found "fork-ts-checker-webpack-plugin"');
+            }
+        }
+
         webpackChain.module
             .rule('ts')
             .test(/\.(tsx?)(\?.*)?$/)
             .exclude.add((/node_modules/)).end()
             .use('ts-loader')
             .loader(require.resolve('ts-loader'))
-            .options({
+            .options(ForkTsCheckerWebpackPlugin ? {
                 transpileOnly: true,
-            });
+            } : {});
+
+        if (ForkTsCheckerWebpackPlugin) {
+            webpackChain
+                .plugin('fork-ts-checker')
+                .use(ForkTsCheckerWebpackPlugin);
+        }
 
         return webpackChain;
     });
