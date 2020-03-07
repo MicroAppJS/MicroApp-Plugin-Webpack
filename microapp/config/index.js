@@ -36,7 +36,7 @@ const config = {
 
     // devServer: {},
 
-    alias: { // 前端
+    alias: {
         api: 'abc',
         config: {
             link: 'abc',
@@ -65,10 +65,13 @@ config.plugins = [
 ];
 
 if (process.env.NODE_ENV === 'test') {
-    config.plugins.push(...[
-        '@micro-app/plugin-compatible',
-        '@micro-app/plugin-deploy', // test
-    ]);
+    config.plugins.push(
+        '@micro-app/plugin-compatible'
+    );
 }
+
+config.plugins.push(
+    '@micro-app/plugin-deploy' // test
+);
 
 module.exports = config;
