@@ -26,8 +26,7 @@ module.exports = function unifiedExtend(api, opts) {
         // (In Vue 3 they are replaced by @vue/compiler-sfc)
         // So wrap them in a try catch block.
         try {
-            vueLoaderCacheIdentifier['vue-template-compiler'] =
-          require('vue-template-compiler/package.json').version;
+            vueLoaderCacheIdentifier['vue-template-compiler'] = require('vue-template-compiler/package.json').version;
         } catch (e) {
             // nothing
         }

@@ -6,6 +6,7 @@ const extendConfigs = [
     'unified/base',
     'unified/css',
     'unified/rules',
+    'unified/babel',
     'unified/vue',
     'unified/plugins',
     'unified/prod',

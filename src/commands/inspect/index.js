@@ -1,7 +1,6 @@
 'use strict';
 
 const defaults = {
-    target: 'app',
     index: 0,
 };
 
@@ -17,14 +16,13 @@ module.exports = function inspectCommand(api, opts) {
         usage: 'micro-app inspect [options] [...paths]',
         options: {
             '--mode': 'specify env mode (default: development)',
-            '--type <type>': 'adapter type, eg. [ webpack, etc. ].',
+            '--target <target>': 'app | lib | node etc. (default: "app")',
             '--rule <ruleName>': 'inspect a specific module rule',
             '--plugin <pluginName>': 'inspect a specific plugin',
             '--rules': 'list all module rule names',
             '--plugins': 'list all plugin names',
             '--verbose': 'show full function definitions in output',
             '--index': 'select config by index (default: 0)',
-            '--target': `app | lib | plugin (default: ${defaults.target})`,
         },
         details: `
 Examples:
@@ -36,12 +34,6 @@ Examples:
     },
     args => {
 
-        // TODO 兼容, 下个版本删除
-        if (args.t && !args.type) {
-            args.type = args.t;
-            logger.warn('you should be use "--type <type>"!!!');
-        }
-
         for (const key in defaults) {
             if (args[key] == null) {
                 args[key] = defaults[key];
@@ -51,9 +43,7 @@ Examples:
         const { toString } = require('webpack-chain');
         const { highlight } = require('cli-highlight');
 
-        const webpackConfig = api.resolveWebpackConfig({
-            target: args.target,
-        });
+        const webpackConfig = api.resolveWebpackConfig();
 
         if (process.env.MICRO_APP_TEST) {
             api.logger.debug('MICRO_APP_TEST --> Exit!!!');

@@ -4,6 +4,8 @@
 
 describe('Command build', () => {
 
+    process.env.MICRO_APP_TEST = true;
+
     let PORTS = 10000;
     function getArgvs() {
         const port = PORTS++;

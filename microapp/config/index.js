@@ -18,7 +18,7 @@ const config = {
         {
             filename: 'index.html',
             hash: true,
-            chunks: [ 'common', 'main' ],
+            chunks: [ 'main' ],
             template: './simple/client/index.html',
         },
     ],

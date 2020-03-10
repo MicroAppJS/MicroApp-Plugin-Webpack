@@ -74,17 +74,16 @@ module.exports = function unifiedExtend(api, opts) {
         webpackChain.module
             .rule('node')
             .test(/\.(node)(\?.*)?$/)
+            .exclude.add((/node_modules/)).end()
+            .use('node-loader')
+            .loader(require.resolve('node-loader'));
+
+        webpackChain.module
+            .rule('node-asset')
+            .test(/\.(m?js|node)(\?.*)?$/)
             .parser({
                 amd: false,
             })
-            .exclude.add((/node_modules/)).end()
-            .use('node-loader')
-            .loader(require.resolve('node-loader'))
-            .options({});
-
-        webpackChain.module
-            .rule('node')
-            .test(/\.(m?js|node)(\?.*)?$/)
             .exclude.add((/node_modules/)).end()
             .use('@marshallofsound/webpack-asset-relocator-loader')
             .loader(require.resolve('@marshallofsound/webpack-asset-relocator-loader'))

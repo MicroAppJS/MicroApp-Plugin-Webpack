@@ -4,6 +4,8 @@
 
 describe('Plugin micro-app:inspect', () => {
 
+    process.env.MICRO_APP_TEST = true;
+
     it('inspect', async () => {
         const { service } = require('@micro-app/cli');
 

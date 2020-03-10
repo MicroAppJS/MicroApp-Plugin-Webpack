@@ -4,6 +4,8 @@
 
 describe('Command serve', () => {
 
+    process.env.MICRO_APP_TEST = true;
+
     let PORTS = 20000;
     function getArgvs() {
         const port = PORTS++;

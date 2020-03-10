@@ -50,21 +50,21 @@
         }
     },
     "peerDependencies": {
-        "@micro-app/cli": ">=0.3.1"
+        "@micro-app/cli": ">=0.3.3"
     },
     "devDependencies": {
-        "@micro-app/cli": "^0.3.2",
+        "@babel/preset-env": "^7.8.7",
+        "@micro-app/cli": "^0.3.3",
         "@micro-app/plugin-compatible": "0.0.2",
         "@micro-app/plugin-deploy": "^0.0.4",
         "@types/jest": "^24.9.1",
-        "babel-eslint": "^10.1.0",
-        "eslint": "^5.16.0",
-        "eslint-config-2o3t": "^1.1.17",
+        "eslint-config-2o3t": "^2.0.1",
         "html-webpack-plugin": "^3.2.0",
         "husky": "^3.1.0",
         "jest": "^24.9.0",
-        "webpack": "^4.41.1",
-        "webpack-dev-server": "^3.9.0"
+        "vue": "^2.6.11",
+        "webpack": "^4.42.0",
+        "webpack-dev-server": "^3.10.3"
     },
     "dependencies": {
         "@intervolga/optimize-cssnano-plugin": "^1.0.6",
@@ -73,6 +73,7 @@
         "@soda/friendly-errors-webpack-plugin": "^1.7.1",
         "address": "^1.1.2",
         "autoprefixer": "^9.7.4",
+        "babel-loader": "^8.0.6",
         "cache-loader": "^4.1.0",
         "case-sensitive-paths-webpack-plugin": "^2.3.0",
         "cli-highlight": "^2.1.4",

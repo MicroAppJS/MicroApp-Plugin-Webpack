@@ -2,7 +2,6 @@
 
 const defaults = {
     clean: false,
-    target: 'web',
 };
 
 module.exports = function buildCommand(api, opts) {
@@ -16,7 +15,7 @@ module.exports = function buildCommand(api, opts) {
         const newOpts = _.cloneDeep(oldOpts);
         Object.assign(newOpts.options, {
             '--clean': 'remove the dist directory before building the project',
-            '--target': `web | node (default: ${defaults.target})`,
+            '--target <target>': 'app | lib | node etc. (default: "app")',
         });
         return newOpts;
     });
@@ -41,14 +40,12 @@ module.exports = function buildCommand(api, opts) {
                 }
             }
 
+            const webpackConfig = api.resolveWebpackConfig();
+
             const options = api.config || {};
 
-            const webpackConfig = api.resolveWebpackConfig({
-                target: args.target,
-            });
-
             // check for common config errors
-            validateWebpackConfig(webpackConfig, api, options, args.target);
+            validateWebpackConfig(webpackConfig, api, options, api.target);
 
             const targetDir = api.resolve(options.outputDir);
 

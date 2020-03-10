@@ -118,20 +118,29 @@ module.exports = function unifiedExtend(api, opts) {
             chunkConfig(webpackChain);
         }
 
-        // const isProd = api.mode === 'production';
+        const isProd = api.mode === 'production';
 
         // load html
+        const SYMBOL_KEY = Symbol.for('KEY');
         const multiPageConfig = options.pages;
         const pages = Object.keys(multiPageConfig);
         const pageHtmlOptions = pages.reduce((arrs, name) => {
             const item = multiPageConfig[name];
-            return arrs.concat(item.htmls);
+            return arrs.concat([].concat(item.htmls).map(html => {
+                html[SYMBOL_KEY] = name;
+                return html;
+            }));
         }, []);
         if (pageHtmlOptions.length > 0) {
             const HTMLPlugin = tryRequire('html-webpack-plugin');
             if (HTMLPlugin) {
                 pageHtmlOptions.forEach((htmlOpts, index) => {
+                    const name = htmlOpts[SYMBOL_KEY];
                     const pname = index ? `html-${name}-${index}` : `html-${name}`;
+
+                    if (!htmlOpts.chunks) {
+                        htmlOpts.chunks = [ name ];
+                    }
 
                     if (htmlOpts.chunks && Array.isArray(htmlOpts.chunks)) {
                         [ CHUNK_COMMON_NAME, CHUNK_VENDORS_NAME, CHUNK_NAME ].forEach(key => {
@@ -141,19 +150,19 @@ module.exports = function unifiedExtend(api, opts) {
                         });
                     }
 
-                    // if (isProd) { // 暂时不定义，外部自行配置
-                    //     Object.assign(htmlOpts, {
-                    //         minify: {
-                    //             removeComments: true,
-                    //             collapseWhitespace: true,
-                    //             removeAttributeQuotes: true,
-                    //             collapseBooleanAttributes: true,
-                    //             removeScriptTypeAttributes: true,
-                    //             // more options:
-                    //             // https://github.com/kangax/html-minifier#options-quick-reference
-                    //         },
-                    //     });
-                    // }
+                    if (isProd) { // 暂时不定义，外部自行配置
+                        Object.assign(htmlOpts, {
+                            minify: {
+                                removeComments: true,
+                                collapseWhitespace: true,
+                                removeAttributeQuotes: true,
+                                collapseBooleanAttributes: true,
+                                removeScriptTypeAttributes: true,
+                                // more options:
+                                // https://github.com/kangax/html-minifier#options-quick-reference
+                            },
+                        });
+                    }
 
                     webpackChain
                         .plugin(pname)

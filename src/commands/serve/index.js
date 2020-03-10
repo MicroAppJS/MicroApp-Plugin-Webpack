@@ -123,12 +123,10 @@ module.exports = function serveCommand(api, opts) {
                 return webpackChain;
             });
 
-            const webpackConfig = api.resolveWebpackConfig({
-                target: args.target,
-            });
+            const webpackConfig = api.resolveWebpackConfig();
 
             // check for common config errors
-            validateWebpackConfig(webpackConfig, api, options, args.target);
+            validateWebpackConfig(webpackConfig, api, options, api.target);
 
             const config = selectModifyConfig(webpackConfig);
 

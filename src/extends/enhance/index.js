@@ -16,7 +16,7 @@ module.exports = function WebpackAdapter(api, opts) {
 
     api.extendMethod('resolveChainableWebpackConfig', {
         description: 'resolve webpack-chain config.',
-    }, options => {
+    }, (options = {}) => {
         if (!initialized) {
             logger.throw('please call after "onInitWillDone" !');
         }
@@ -29,8 +29,9 @@ module.exports = function WebpackAdapter(api, opts) {
         delete _originalWebpackConfig.plugins; // 不接受 plugins
         webpackChainConfig.merge(_originalWebpackConfig);
 
-        if (options.target) { // target, 默认 web
-            webpackChainConfig.target(options.target);
+        const target = api.target; // target, 默认 web
+        if ([ 'app', 'lib', 'web' ].includes(target)) { // 其它类型外部自己设置
+            webpackChainConfig.target('web');
         }
 
         const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig, options);
@@ -42,7 +43,7 @@ module.exports = function WebpackAdapter(api, opts) {
 
     api.extendMethod('resolveWebpackConfig', {
         description: 'resolve webpack config.',
-    }, options => {
+    }, (options = {}) => {
         const finalWebpackChainConfig = api.resolveChainableWebpackConfig(options);
         const webpackConfig = finalWebpackChainConfig.toConfig();
         const finalWebpackConfig = api.applyPluginHooks('modifyWebpackConfig', webpackConfig, options);
