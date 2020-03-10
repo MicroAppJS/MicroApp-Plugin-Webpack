@@ -1,3 +1,10 @@
+## [0.0.4](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.3...v0.0.4) (2020-03-10)
+
+
+### Features
+
+* add babel-loader ([a244b5d](https://github.com/MicroAppJS/plugin-webpack/commit/a244b5d613e7d728b0fea85e0170deba1052baaa))
+
 ## [0.0.3](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.2...v0.0.3) (2020-03-07)
 
 
