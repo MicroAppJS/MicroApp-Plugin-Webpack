@@ -918,21 +918,21 @@
   dependencies:
     sourcemap-codec "^1.4.4"
 
-"@micro-app/cli@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@micro-app/cli/-/cli-0.3.3.tgz#7d4d12dd7594c40ccd40bc6ad682e300ce00a285"
-  integrity sha512-s7VcpIbUmMGd+XvXfKKLTfW3bwH5DE+Jc1rl2I+SIwUa13FMHkbfX0/Sj+paubw9a5+Xx41ibu1wAF2QR/Q2OA==
+"@micro-app/cli@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@micro-app/cli/-/cli-0.3.4.tgz#4d3e5db945e613f9ddfbb45efc0f73289e84df58"
+  integrity sha512-NBlJi87HoTg3GQoY73yLIf+M8myWhWgqXm/8KYNs7LWIf2+gEUlD7OgmylQFg5P1seWOEpmCu7IXV0pIOTJeXw==
   dependencies:
-    "@micro-app/core" "^0.3.7"
+    "@micro-app/core" "^0.3.10"
     "@zkochan/cmd-shim" "^3.1.0"
     read-cmd-shim "^1.0.5"
     update-notifier "^3.0.1"
     yargs-parser "^16.1.0"
 
-"@micro-app/core@^0.3.7":
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/@micro-app/core/-/core-0.3.7.tgz#6d329a0fd5f46cc1e0f46c52080342419299093c"
-  integrity sha512-Gi4U5qJzFyy32aWG1FOJHv7aJmeeb7s7CEmVbaXeSyq7GTPL1FegIAQ5nKcqWY28G/X2xp1+9nMYA7/tK4NoSQ==
+"@micro-app/core@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@micro-app/core/-/core-0.3.10.tgz#edcc2b25517ea6251e1874c99e10b569b10f4736"
+  integrity sha512-edMezbsnMTGD/kiNY3iSLo+CstOaMbPKYhJOfQ3mlatBM2aw6ODj186tn+Xv73ZPockAxMKwL7mFh0TrL0Ssaw==
   dependencies:
     "@micro-app/shared-utils" "^0.1.15"
     dotenv "^8.2.0"
@@ -946,10 +946,10 @@
     koa "^2.11.0"
     koa-convert "^1.2.0"
 
-"@micro-app/plugin-deploy@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@micro-app/plugin-deploy/-/plugin-deploy-0.0.4.tgz#0125b16ed43e3668bdeb27ee6ff8db646d0ffed4"
-  integrity sha512-3hEFZvb5LuTu0N/TalV3Scr2GIJYpc9G2B+qL2VLf+K3GvF0c94uwjTGjT0OsFeJ3UtRC2xVll89FmieJpVWfA==
+"@micro-app/plugin-deploy@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@micro-app/plugin-deploy/-/plugin-deploy-0.0.5.tgz#5fc98861023e2d712b5f9aecb4e990a3900c74ab"
+  integrity sha512-e8ycu/h02XhRqjLIKz2mrer05fVFFDQlSvxZxsKRk6GNTqb4ZZ9xsmbfDDI3omp+56WPmbK3FElr/9piB+S1OQ==
   dependencies:
     "@release-it/conventional-changelog" "^1.1.0"
     release-it "^12.4.3"
