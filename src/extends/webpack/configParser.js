@@ -27,39 +27,6 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
         });
     }
 
-    function dlls() {
-        if (extraConfig.disabled) {
-            return [];
-        }
-        // 支持 array
-        const dlls = originalConfig.dlls || [];
-        const _dll = originalConfig.dll; // 兼容
-        if (_dll && typeof _dll === 'object') {
-            dlls.unshift(_dll);
-        }
-        dlls.forEach(item => {
-            if (item && item.context) {
-                const context = item.context;
-                if (!tryRequire.resolve(context)) {
-                    item.context = path.resolve(selfConfig.root, context);
-                }
-            }
-            if (item && item.manifest) {
-                const manifest = item.manifest;
-                if (!tryRequire.resolve(manifest)) {
-                    item.manifest = path.resolve(selfConfig.root, manifest);
-                }
-            }
-            if (item && item.filepath) {
-                const filepath = item.filepath;
-                if (!tryRequire.resolve(filepath)) {
-                    item.filepath = path.resolve(selfConfig.root, filepath);
-                }
-            }
-        });
-        return dlls;
-    }
-
     function htmls() {
         if (extraConfig.disabled) {
             return [];
@@ -133,7 +100,6 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
 
     return {
         staticPaths,
-        dlls,
         htmls,
         entry,
     };

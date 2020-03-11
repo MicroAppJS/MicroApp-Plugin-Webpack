@@ -126,7 +126,7 @@ module.exports = function unifiedExtend(api, opts) {
         const pages = Object.keys(multiPageConfig);
         const pageHtmlOptions = pages.reduce((arrs, name) => {
             const item = multiPageConfig[name];
-            return arrs.concat([].concat(item.htmls).map(html => {
+            return arrs.concat([ item.html ].map(html => {
                 html[SYMBOL_KEY] = name;
                 return html;
             }));

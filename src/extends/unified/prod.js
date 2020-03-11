@@ -32,8 +32,10 @@ module.exports = function unifiedExtend(api, opts) {
         pages.forEach(name => {
             const item = multiPageConfig[name];
             // load html
-            const pageHtmlOptions = item.htmls;
-            publicCopyIgnore.push(...pageHtmlOptions.map(opts => opts.template));
+            const pageHtmlOptions = item.html;
+            if (pageHtmlOptions.template) {
+                publicCopyIgnore.push(pageHtmlOptions.template);
+            }
         });
 
         const NamedChunksPlugin = tryRequire('webpack/lib/NamedChunksPlugin');

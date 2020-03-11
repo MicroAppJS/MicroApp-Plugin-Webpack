@@ -4,9 +4,6 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '../../');
 
 const config = {
-    name: '@micro-app/demo',
-    description: '',
-    version: '0.0.1',
     type: '', // types 类型
     webpack: { }, // webpack 配置 (只有自己使用)
 
@@ -27,12 +24,6 @@ const config = {
     // publicPath: '/',
 
     // staticPath: '',
-
-    // dlls: [
-    //     {
-    //         context: __dirname,
-    //     },
-    // ],
 
     // devServer: {},
 

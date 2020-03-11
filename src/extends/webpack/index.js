@@ -18,7 +18,6 @@ module.exports = function extendWebpack(api, opts) {
             Object.assign(obj[key], {
                 entry: _configParser.entry(),
                 htmls: _configParser.htmls(),
-                dlls: _configParser.dlls(),
                 staticPaths: _configParser.staticPaths(),
             });
             return obj;
@@ -30,7 +29,7 @@ module.exports = function extendWebpack(api, opts) {
         const configCombine = require('./configCombine');
         const microsConfig = api.microsConfig;
         const selfConfig = api.selfConfig;
-        const _selfConfigCombine = configCombine(selfConfig, 'index');
+        const _selfConfigCombine = configCombine(selfConfig);
 
         function pickOptions(obj) {
             return _.pick(obj, [
@@ -40,7 +39,6 @@ module.exports = function extendWebpack(api, opts) {
                 'resolveShared',
                 'entry',
                 'htmls',
-                'dlls',
                 'staticPaths',
             ]);
         }
@@ -49,7 +47,7 @@ module.exports = function extendWebpack(api, opts) {
         const finalMicrosConfigs = micros.map(key => {
             const obj = microsConfig[key];
             if (!obj) return {};
-            const _configCombine = configCombine(obj, key);
+            const _configCombine = configCombine(obj);
             return Object.assign({
                 pages: _configCombine.pages(),
                 nodeModulesPaths: _configCombine.nodeModulesPaths(),
