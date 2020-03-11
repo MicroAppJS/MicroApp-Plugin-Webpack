@@ -14,7 +14,7 @@ module.exports = function configCombine(obj) {
                 const _html = htmls.find(item => Array.isArray(item.chunks) && item.chunks.includes(key)) || html;
                 obj[key] = {
                     entry: _entry,
-                    html: _html,
+                    ..._html,
                 };
                 return obj;
             }, {});

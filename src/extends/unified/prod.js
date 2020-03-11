@@ -30,9 +30,8 @@ module.exports = function unifiedExtend(api, opts) {
 
         const publicCopyIgnore = [ '.DS_Store' ];
         pages.forEach(name => {
-            const item = multiPageConfig[name];
             // load html
-            const pageHtmlOptions = item.html;
+            const pageHtmlOptions = multiPageConfig[name];
             if (pageHtmlOptions.template) {
                 publicCopyIgnore.push(pageHtmlOptions.template);
             }

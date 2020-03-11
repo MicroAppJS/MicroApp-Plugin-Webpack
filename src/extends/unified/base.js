@@ -121,21 +121,13 @@ module.exports = function unifiedExtend(api, opts) {
         const isProd = api.mode === 'production';
 
         // load html
-        const SYMBOL_KEY = Symbol.for('KEY');
         const multiPageConfig = options.pages;
         const pages = Object.keys(multiPageConfig);
-        const pageHtmlOptions = pages.reduce((arrs, name) => {
-            const item = multiPageConfig[name];
-            return arrs.concat([ item.html ].map(html => {
-                html[SYMBOL_KEY] = name;
-                return html;
-            }));
-        }, []);
-        if (pageHtmlOptions.length > 0) {
+        if (pages.length > 0) {
             const HTMLPlugin = tryRequire('html-webpack-plugin');
             if (HTMLPlugin) {
-                pageHtmlOptions.forEach((htmlOpts, index) => {
-                    const name = htmlOpts[SYMBOL_KEY];
+                pages.forEach((name, index) => {
+                    const htmlOpts = multiPageConfig[name];
                     const pname = index ? `html-${name}-${index}` : `html-${name}`;
 
                     if (!htmlOpts.chunks) {
