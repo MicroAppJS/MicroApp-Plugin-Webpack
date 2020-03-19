@@ -1,3 +1,11 @@
+## [0.0.7](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.6...v0.0.7) (2020-03-19)
+
+
+### Features
+
+* add skipTarget for vue-cli ([cf09c38](https://github.com/MicroAppJS/plugin-webpack/commit/cf09c384e7aa4505d8d81b07cb6e1dc0029b065c))
+* add webpack webpack-dev-server ([b8c32b9](https://github.com/MicroAppJS/plugin-webpack/commit/b8c32b9b9da13a2e107d4f5e14db43c34a58d960))
+
 ## [0.0.6](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.5...v0.0.6) (2020-03-11)
 
 
