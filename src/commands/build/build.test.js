@@ -16,7 +16,8 @@ describe('Command build', () => {
 
         process.env.NODE_ENV = 'production';
 
-        const { service } = require('@micro-app/cli');
+        const { createService } = require('@micro-app/cli');
+        const service = createService();
 
         await service.run('build', getArgvs());
 
@@ -30,7 +31,8 @@ describe('Command build', () => {
 
         process.env.NODE_ENV = 'production';
 
-        const { service } = require('@micro-app/cli');
+        const { createService } = require('@micro-app/cli');
+        const service = createService();
 
         const result = await service.run('build', Object.assign({
             openSoftLink: true,

@@ -16,7 +16,8 @@ describe('Command serve', () => {
 
         process.env.NODE_ENV = 'development';
 
-        const { service } = require('@micro-app/cli');
+        const { createService } = require('@micro-app/cli');
+        const service = createService();
 
         const plugin = service.plugins.find(item => item.id === 'cli:plugin-command-serve');
         expect(typeof plugin).toEqual('object');
@@ -37,7 +38,8 @@ describe('Command serve', () => {
 
         process.env.NODE_ENV = 'development';
 
-        const { service } = require('@micro-app/cli');
+        const { createService } = require('@micro-app/cli');
+        const service = createService();
 
         const plugin = service.plugins.find(item => item.id === 'cli:plugin-command-serve');
         expect(typeof plugin).toEqual('object');
@@ -117,7 +119,8 @@ describe('Command serve', () => {
 
         process.env.NODE_ENV = 'development';
 
-        const { service } = require('@micro-app/cli');
+        const { createService } = require('@micro-app/cli');
+        const service = createService();
 
         const plugin = service.plugins.find(item => item.id === 'cli:plugin-command-serve');
         expect(typeof plugin).toEqual('object');
@@ -148,7 +151,8 @@ describe('Command serve', () => {
 
         process.env.NODE_ENV = 'development';
 
-        const { service } = require('@micro-app/cli');
+        const { createService } = require('@micro-app/cli');
+        const service = createService();
 
         await service.run('serve', Object.assign({
             openSoftLink: true,

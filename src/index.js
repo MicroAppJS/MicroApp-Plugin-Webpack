@@ -22,8 +22,18 @@ const commands = [
 module.exports = [
     ...extendConfigs.map(name => {
         const item = require(`./extends/${name}`);
-        if (item.configuration && !item.configuration.alias) {
+        if (!item.configuration) {
+            item.configuration = {};
+        }
+        if (!item.configuration.alias) {
             item.configuration.alias = `extends-${name.replace(/\//, '_')}`;
+        }
+        // skipTarget
+        if (name.startsWith('unified/')) {
+            if (!item.configuration.skipTarget) {
+                item.configuration.skipTarget = [];
+            }
+            item.configuration.skipTarget.concat([ 'vue-cli', 'vue-cli-plugin' ]); // 统一适配 vue-cli
         }
         return item;
     }),

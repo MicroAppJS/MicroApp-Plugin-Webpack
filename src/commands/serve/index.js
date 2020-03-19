@@ -130,13 +130,6 @@ module.exports = function serveCommand(api, opts) {
 
             const config = selectModifyConfig(webpackConfig);
 
-            // load user devServer options with higher priority than devServer
-            // in webpack config
-            const projectDevServerOptions = Object.assign(
-                config.devServer || {},
-                options.devServer || {}
-            );
-
             // entry arg
             const entry = args.entry;
             if (entry && _.isString(entry)) {
@@ -144,6 +137,17 @@ module.exports = function serveCommand(api, opts) {
                     app: api.resolve(entry),
                 };
             }
+            // entry
+            if (!config.entry || _.isEmpty(config.entry)) {
+                api.logger.throw('[webapck]', 'entry must be required!');
+            }
+
+            // load user devServer options with higher priority than devServer
+            // in webpack config
+            const projectDevServerOptions = Object.assign(
+                config.devServer || {},
+                options.devServer || {}
+            );
 
             // resolve server options
             const useHttps = args.https || projectDevServerOptions.https || defaults.https;
