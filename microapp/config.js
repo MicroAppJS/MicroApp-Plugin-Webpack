@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const ROOT = path.resolve(__dirname, '../../');
+const ROOT = path.resolve(__dirname, '../');
 
 const config = {
     type: '', // types 类型
