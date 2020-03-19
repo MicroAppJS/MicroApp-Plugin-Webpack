@@ -1,3 +1,10 @@
+## [0.0.8](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.7...v0.0.8) (2020-03-19)
+
+
+### Features
+
+* add plugin hook 'createChainWebpackConfigInstance' ([62c3fd3](https://github.com/MicroAppJS/plugin-webpack/commit/62c3fd32b31bd9cf3c5847556b9ad16c1ff953a7))
+
 ## [0.0.7](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.6...v0.0.7) (2020-03-19)
 
 
