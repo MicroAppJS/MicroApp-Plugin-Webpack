@@ -21,7 +21,9 @@ module.exports = function WebpackAdapter(api, opts) {
             logger.throw('please call after "onInitWillDone" !');
         }
 
-        const webpackChainConfig = new Config();
+        // 可通过外部初始化一个已存在的 webpackChain 实例
+        const webpackChainConfig = api.applyPluginHooks('createChainWebpackConfigInstance', new Config(), options);
+
         const selfConfig = api.selfConfig || {};
         const originalConfig = selfConfig.originalConfig || {};
         const _originalWebpackConfig = _.cloneDeep(originalConfig.webpack || {});

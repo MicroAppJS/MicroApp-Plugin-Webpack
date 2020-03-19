@@ -57,14 +57,14 @@ module.exports = function unifiedExtend(api, opts) {
         // copy static
         const staticPaths = (options.staticPaths || []).filter(item => fs.existsSync(item));
         if (staticPaths.length) {
-            const COPYPlugin = tryRequire('copy-webpack-plugin');
-            if (COPYPlugin) {
+            const CopyWebpackPlugin = tryRequire('copy-webpack-plugin');
+            if (CopyWebpackPlugin) {
                 webpackChain
                     .plugin('copy')
-                    .use(COPYPlugin, [ staticPaths.map(publicDir => {
+                    .use(CopyWebpackPlugin, [ staticPaths.map(publicDir => {
                         return {
                             from: publicDir,
-                            // to: options.outputDir,
+                            // to: options.outputDir, // 自动使用 webpack 配置
                             toType: 'dir',
                             ignore: publicCopyIgnore,
                         };
