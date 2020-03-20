@@ -34,7 +34,9 @@ module.exports = [
             if (!item.configuration.skipTarget) {
                 item.configuration.skipTarget = [];
             }
-            item.configuration.skipTarget.concat([ 'vue-cli', 'vue-cli-plugin' ]); // 统一适配 vue-cli
+            item.configuration.skipTarget.push( // 统一适配 vue-cli
+                'vue-cli-plugin'
+            );
         }
         return item;
     }),
