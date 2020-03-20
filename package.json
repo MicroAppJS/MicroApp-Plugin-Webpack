@@ -1,6 +1,6 @@
 {
     "name": "@micro-app/plugin-webpack",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "[Plugin] webpack adapter plugin.",
     "main": "src/index.js",
     "bin": {

@@ -1,3 +1,10 @@
+## [0.0.9](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.8...v0.0.9) (2020-03-20)
+
+
+### Bug Fixes
+
+* fix some bugs ([6486764](https://github.com/MicroAppJS/plugin-webpack/commit/648676479c631aa20a42de0685d8a80ac847497a))
+
 ## [0.0.8](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.7...v0.0.8) (2020-03-19)
 
 
