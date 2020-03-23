@@ -2,83 +2,68 @@
 
 module.exports = function extendWebpack(api, opts) {
 
-    api.assertVersion('>=0.3.0');
+    api.assertVersion('>=0.3.14');
 
     const registerMethods = require('./methods');
     registerMethods(api);
 
     const { _, smartMerge } = require('@micro-app/shared-utils');
 
-    // 扩增 microsConfig 配置
-    api.modifyMicrosConfig(_config => {
-        const configParser = require('./configParser');
-        const microsExtraConfig = api.microsExtraConfig;
-        return Object.keys(_config).reduce((obj, key) => {
-            const _configParser = configParser(obj, key, microsExtraConfig[key]);
-            Object.assign(obj[key], {
-                entry: _configParser.entry(),
-                htmls: _configParser.htmls(),
-                staticPaths: _configParser.staticPaths(),
-            });
-            return obj;
-        }, _config);
+    // 直接在 microsConfig 上设置, 扩增 microsConfig 配置
+    const configParser = require('./configParser');
+    const configCombine = require('./configCombine');
+    const microsExtraConfig = api.microsExtraConfig;
+    const microsConfig = api.microsConfig;
+    Object.keys(microsConfig).forEach(key => {
+        const item = microsConfig[key];
+        const _configParser = configParser(microsConfig, key, microsExtraConfig[key]);
+        Object.assign(item, {
+            entry: _configParser.entry(),
+            htmls: _configParser.htmls(),
+            staticPaths: _configParser.staticPaths(),
+        });
+        const _configCombine = configCombine(item);
+        Object.assign(item, {
+            pages: _configCombine.pages(),
+            nodeModulesPaths: _configCombine.nodeModulesPaths(),
+        });
     });
 
-    // 扩增 config 配置
-    api.modifyDefaultConfig(_config => {
-        const configCombine = require('./configCombine');
-        const microsConfig = api.microsConfig;
-        const selfConfig = api.selfConfig;
-        const _selfConfigCombine = configCombine(selfConfig);
+    // 直接在 config 上设置, 扩增 config 配置
+    const config = api.config;
 
-        function pickOptions(obj) {
-            return _.pick(obj, [
-                'alias',
-                'resolveAlias',
-                'shared',
-                'resolveShared',
-                'entry',
-                'htmls',
-                'staticPaths',
-            ]);
-        }
-
-        const micros = api.micros;
-        const finalMicrosConfigs = micros.map(key => {
-            const obj = microsConfig[key];
-            if (!obj) return {};
-            const _configCombine = configCombine(obj);
-            return Object.assign({
-                pages: _configCombine.pages(),
-                nodeModulesPaths: _configCombine.nodeModulesPaths(),
-            }, pickOptions(obj));
-        });
-
-        const finalConfig = smartMerge({}, ...finalMicrosConfigs, Object.assign({
-            pages: _selfConfigCombine.pages(),
-            nodeModulesPaths: _selfConfigCombine.nodeModulesPaths(),
-        }, pickOptions(selfConfig), selfConfig));
-
-        const originalConfig = selfConfig.originalConfig || {};
-        const defaultConfig = {
-            outputDir: 'dist',
-            publicPath: '/',
-            assetsDir: '',
-            devServer: {},
-            css: {},
-        };
-        const otherConfig = Object.assign({ // default config
-            ...defaultConfig,
-        }, _.pick(originalConfig, [
+    // 只使用所有配置中的一个
+    const originalConfig = smartMerge({}, ...Object.values(microsConfig).map(item => {
+        const originalConfig = item.originalConfig || {};
+        return _.pick(originalConfig, [
             'outputDir',
             'publicPath',
             'assetsDir',
             'devServer',
             'css',
-        ]));
-        // 校验
-        return Object.assign({}, _config, _.cloneDeep(finalConfig), otherConfig);
-    });
+        ]);
+    }));
+
+    // 增加校验配置
+    api.validateSchema(require('./configSchema'), originalConfig);
+
+    const defaultConfig = { // default config
+        outputDir: 'dist',
+        publicPath: '/',
+        assetsDir: '',
+        devServer: {},
+        css: {},
+    };
+    smartMerge(config, ...Object.values(microsConfig).map(item => {
+        return _.pick(item || {}, [
+            'entry',
+            'htmls',
+            'staticPaths',
+            'pages',
+            'nodeModulesPaths',
+        ]);
+    }), defaultConfig, originalConfig);
+
 };
 
 module.exports.configuration = {

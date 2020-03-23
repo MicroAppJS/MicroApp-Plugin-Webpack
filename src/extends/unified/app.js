@@ -55,7 +55,7 @@ module.exports = function unifiedExtend(api, opts) {
         const isProd = api.mode === 'production';
 
         // load html
-        const multiPageConfig = options.pages;
+        const multiPageConfig = options.pages || {};
         const pages = Object.keys(multiPageConfig);
         if (pages.length > 0) {
             const HTMLPlugin = tryRequire('html-webpack-plugin');

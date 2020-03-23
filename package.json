@@ -3,9 +3,6 @@
     "version": "0.0.9",
     "description": "[Plugin] webpack adapter plugin.",
     "main": "src/index.js",
-    "bin": {
-        "micro-app-build": "./bin/micro-app-build"
-    },
     "scripts": {
         "prepublishOnly": "npm run test",
         "lint": "eslint .",
@@ -21,7 +18,6 @@
         "release:patch": "npm run release patch"
     },
     "files": [
-        "bin",
         "src"
     ],
     "homepage": "https://github.com/MicroAppJS/plugin-webpack",
@@ -52,12 +48,12 @@
         }
     },
     "peerDependencies": {
-        "@micro-app/cli": ">=0.3.7"
+        "@micro-app/core": "^0.3.16"
     },
     "devDependencies": {
-        "@babel/core": "^7.8.7",
-        "@babel/preset-env": "^7.8.7",
-        "@micro-app/cli": "^0.3.7",
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.0",
+        "@micro-app/cli": "^0.3.8",
         "@micro-app/plugin-compatible": "0.0.3",
         "@micro-app/plugin-deploy": "^0.0.6",
         "@types/jest": "^24.9.1",
@@ -75,23 +71,23 @@
         "@soda/friendly-errors-webpack-plugin": "^1.7.1",
         "address": "^1.1.2",
         "autoprefixer": "^9.7.4",
-        "babel-loader": "^8.0.6",
+        "babel-loader": "^8.1.0",
         "cache-loader": "^4.1.0",
         "case-sensitive-paths-webpack-plugin": "^2.3.0",
         "cli-highlight": "^2.1.4",
-        "clipboardy": "^2.2.0",
+        "clipboardy": "^2.3.0",
         "css-loader": "^3.4.2",
         "cssnano": "^4.1.10",
-        "default-gateway": "^5.0.5",
+        "default-gateway": "^6.0.0",
         "file-loader": "^5.1.0",
         "launch-editor-middleware": "^2.2.1",
         "mini-css-extract-plugin": "^0.9.0",
         "node-loader": "^0.6.0",
         "portfinder": "^1.0.25",
         "postcss-loader": "^3.0.0",
-        "ts-loader": "^6.2.1",
-        "url-loader": "^3.0.0",
-        "vue-loader": "^15.9.0",
+        "ts-loader": "^6.2.2",
+        "url-loader": "^4.0.0",
+        "vue-loader": "^15.9.1",
         "vue-style-loader": "^4.1.2",
         "webpack": "^4",
         "webpack-chain": "^6.4.0",

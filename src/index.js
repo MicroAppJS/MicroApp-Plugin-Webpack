@@ -19,6 +19,8 @@ const commands = [
     'inspect',
 ];
 
+const SKIP_TARGET = [ 'pure' ];
+
 // 只能通过集中初始化去实现, 不可进行插件注册(registerPlugins). 否则顺序不可控.
 module.exports = [
     ...extendConfigs.map(name => {
@@ -34,8 +36,8 @@ module.exports = [
             if (!item.configuration.skipTarget) {
                 item.configuration.skipTarget = [];
             }
-            item.configuration.skipTarget.push( // 统一适配 vue-cli
-                'vue-cli-plugin'
+            item.configuration.skipTarget.push( // 统一适配当 target = pure 时，不使用所有内置配置
+                ...SKIP_TARGET
             );
         }
         return item;

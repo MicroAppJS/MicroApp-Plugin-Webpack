@@ -30,11 +30,11 @@ module.exports = function configCombine(obj) {
     }
 
     function nodeModulesPaths() {
-        const nodeModules = obj.nodeModules;
-        if (nodeModules && !Array.isArray(nodeModules)) {
-            return [ nodeModules ];
-        } else if (Array.isArray(nodeModules)) {
-            return nodeModules;
+        const nodeModulesPath = obj.nodeModulesPath;
+        if (nodeModulesPath && !Array.isArray(nodeModulesPath)) {
+            return [ nodeModulesPath ];
+        } else if (Array.isArray(nodeModulesPath)) {
+            return nodeModulesPath;
         }
         return [];
     }

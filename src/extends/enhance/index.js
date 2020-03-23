@@ -2,7 +2,7 @@
 
 module.exports = function WebpackAdapter(api, opts) {
 
-    api.assertVersion('>=0.2.0');
+    api.assertVersion('>=0.3.0');
 
     const registerMethods = require('./methods');
     registerMethods(api);
