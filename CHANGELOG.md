@@ -1,3 +1,10 @@
+## [0.0.11](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.10...v0.0.11) (2020-03-23)
+
+
+### Features
+
+* support `dependencies` option ([4168097](https://github.com/MicroAppJS/plugin-webpack/commit/4168097fd9e99ea31fcfe612a4848c05c4d89bca))
+
 ## [0.0.10](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.9...v0.0.10) (2020-03-23)
 
 ## [0.0.9](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.8...v0.0.9) (2020-03-20)
