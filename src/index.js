@@ -19,7 +19,8 @@ const commands = [
     'inspect',
 ];
 
-const SKIP_TARGET = [ 'pure' ];
+const SKIP_TARGET = [ 'pure' ]; // target
+const DEPENDENCIES_PLUGIN = [ '@micro-app/cli' ]; // dependencies
 
 // 只能通过集中初始化去实现, 不可进行插件注册(registerPlugins). 否则顺序不可控.
 module.exports = [
@@ -45,8 +46,20 @@ module.exports = [
 
     ...commands.map(name => {
         const item = require(`./commands/${name}`);
-        if (item.configuration && !item.configuration.alias) {
+        if (!item.configuration) {
+            item.configuration = {};
+        }
+        if (!item.configuration.alias) {
             item.configuration.alias = `commands-${name.replace(/\//, '_')}`;
+        }
+        // dependencies
+        if (!name.startsWith('inspect')) {
+            if (!item.configuration.dependencies) {
+                item.configuration.dependencies = [];
+            }
+            item.configuration.dependencies.push( // 除了 inspect，所有 command 都需要依赖 cli 的方法
+                ...DEPENDENCIES_PLUGIN
+            );
         }
         return item;
     }),

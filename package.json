@@ -48,12 +48,12 @@
         }
     },
     "peerDependencies": {
-        "@micro-app/core": "^0.3.16"
+        "@micro-app/core": "^0.3.18"
     },
     "devDependencies": {
         "@babel/core": "^7.9.0",
         "@babel/preset-env": "^7.9.0",
-        "@micro-app/cli": "^0.3.8",
+        "@micro-app/cli": "^0.3.9",
         "@micro-app/plugin-compatible": "0.0.3",
         "@micro-app/plugin-deploy": "^0.0.6",
         "@types/jest": "^24.9.1",
