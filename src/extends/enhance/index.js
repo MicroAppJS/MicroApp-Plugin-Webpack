@@ -16,13 +16,13 @@ module.exports = function WebpackAdapter(api, opts) {
 
     api.extendMethod('resolveChainableWebpackConfig', {
         description: 'resolve webpack-chain config.',
-    }, (options = {}) => {
+    }, (webpackChainConfig = new Config()) => {
         if (!initialized) {
             logger.throw('please call after "onInitWillDone" !');
         }
 
         // 可通过外部初始化一个已存在的 webpackChain 实例
-        const webpackChainConfig = api.applyPluginHooks('createChainWebpackConfigInstance', new Config(), options);
+        webpackChainConfig = api.applyPluginHooks('createChainWebpackConfigInstance', webpackChainConfig);
 
         const selfConfig = api.selfConfig || {};
         const originalConfig = selfConfig.originalConfig || {};
@@ -36,7 +36,7 @@ module.exports = function WebpackAdapter(api, opts) {
             webpackChainConfig.target('web');
         }
 
-        const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig, options);
+        const finalWebpackChainConfig = api.applyPluginHooks('modifyChainWebpackConfig', webpackChainConfig);
         api.applyPluginHooks('onChainWebpcakConfig', finalWebpackChainConfig);
 
         api.setState('webpackChainConfig', finalWebpackChainConfig);
@@ -45,10 +45,10 @@ module.exports = function WebpackAdapter(api, opts) {
 
     api.extendMethod('resolveWebpackConfig', {
         description: 'resolve webpack config.',
-    }, (options = {}) => {
-        const finalWebpackChainConfig = api.resolveChainableWebpackConfig(options);
+    }, webpackChainConfig => {
+        const finalWebpackChainConfig = api.resolveChainableWebpackConfig(webpackChainConfig);
         const webpackConfig = finalWebpackChainConfig.toConfig();
-        const finalWebpackConfig = api.applyPluginHooks('modifyWebpackConfig', webpackConfig, options);
+        const finalWebpackConfig = api.applyPluginHooks('modifyWebpackConfig', webpackConfig);
 
         api.setState('webpackConfig', finalWebpackConfig);
         return finalWebpackConfig;
