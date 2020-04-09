@@ -1,3 +1,10 @@
+## [0.0.12](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.11...v0.0.12) (2020-04-09)
+
+
+### Bug Fixes
+
+* refactoring code ([a9eab16](https://github.com/MicroAppJS/plugin-webpack/commit/a9eab16441d554b270c11f1623fb746af084ee6a))
+
 ## [0.0.11](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.10...v0.0.11) (2020-03-23)
 
 
