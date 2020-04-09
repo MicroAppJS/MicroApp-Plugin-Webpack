@@ -59,13 +59,14 @@ module.exports = function unifiedExtend(api, opts) {
         if (staticPaths.length) {
             const CopyWebpackPlugin = tryRequire('copy-webpack-plugin');
             if (CopyWebpackPlugin) {
+                const outputDir = webpackChain.output.get('path');
                 webpackChain
                     .plugin('copy')
                     .use(CopyWebpackPlugin, [ staticPaths.map(publicDir => {
                         return {
                             from: publicDir,
-                            // to: options.outputDir, // 自动使用 webpack 配置
-                            toType: 'dir',
+                            to: outputDir,
+                            // toType: 'dir',
                             ignore: publicCopyIgnore,
                         };
                     }) ]);
