@@ -66,7 +66,7 @@ module.exports = function unifiedExtend(api, opts) {
                         return {
                             from: publicDir,
                             to: outputDir,
-                            // toType: 'dir',
+                            toType: 'dir',
                             ignore: publicCopyIgnore,
                         };
                     }) ]);
