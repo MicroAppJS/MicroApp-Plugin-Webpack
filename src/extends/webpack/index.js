@@ -19,7 +19,8 @@ module.exports = function extendWebpack(api, opts) {
         const _configParser = configParser(microsConfig, key, microsExtraConfig[key]);
         Object.assign(item, {
             entry: _configParser.entry(),
-            htmls: _configParser.htmls(),
+            html: _configParser.html(),
+            htmls: _configParser.htmls(), // TODO
             staticPaths: _configParser.staticPaths(),
         });
         const _configCombine = configCombine(item);

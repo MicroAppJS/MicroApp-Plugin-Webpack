@@ -11,8 +11,12 @@ module.exports = {
             description: '入口配置. ( object )',
             type: 'object',
         },
+        html: {
+            description: '对应entry的模版配置. ( object )',
+            type: 'object',
+        },
         htmls: {
-            description: '模版配置. ( array<object> )',
+            description: '@Deprecated 请使用 html 配置',
             items: {
                 required: [ 'template' ],
                 type: 'object',
@@ -43,6 +47,14 @@ module.exports = {
         },
         publicPath: {
             description: 'public resource path. ( stirng )',
+            type: 'string',
+        },
+        outputDir: {
+            description: 'output resource path. ( stirng )',
+            type: 'string',
+        },
+        assetsDir: {
+            description: 'assets resource path. ( stirng )',
             type: 'string',
         },
     },

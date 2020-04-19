@@ -3,6 +3,7 @@
 const extendConfigs = [
     'webpack',
     'enhance',
+].concat([
     'unified/base',
     'unified/app',
     'unified/css',
@@ -11,7 +12,9 @@ const extendConfigs = [
     'unified/vue',
     'unified/plugins',
     'unified/prod',
-];
+], [
+    'submodule',
+]);
 
 const commands = [
     'build',
@@ -19,8 +22,7 @@ const commands = [
     'inspect',
 ];
 
-const SKIP_TARGET = [ 'pure' ]; // target
-const DEPENDENCIES_PLUGIN = [ '@micro-app/cli' ]; // dependencies
+const { SKIP_CONTEXT, DEPENDENCIES_PLUGIN } = require('./config');
 
 // 只能通过集中初始化去实现, 不可进行插件注册(registerPlugins). 否则顺序不可控.
 module.exports = [
@@ -32,13 +34,13 @@ module.exports = [
         if (!item.configuration.alias) {
             item.configuration.alias = `extends-${name.replace(/\//, '_')}`;
         }
-        // skipTarget
+        // skipContext
         if (name.startsWith('unified/')) {
-            if (!item.configuration.skipTarget) {
-                item.configuration.skipTarget = [];
+            if (!item.configuration.skipContext) {
+                item.configuration.skipContext = [];
             }
-            item.configuration.skipTarget.push( // 统一适配当 target = pure 时，不使用所有内置配置
-                ...SKIP_TARGET
+            item.configuration.skipContext.push( // 统一适配当 --pure-webpack-unified-config 存在时，不使用所有内置配置
+                ...SKIP_CONTEXT
             );
         }
         return item;

@@ -3,38 +3,28 @@
 module.exports = function configCombine(obj) {
 
     function pages() {
-
-        const entry = obj.entry;
+        const entry = obj.entry || {};
+        const html = obj.html || {}; // 优先
         const htmls = obj.htmls || [];
-        const html = Array.isArray(htmls) && htmls[0] || {};
-
-        if (typeof entry === 'object') {
-            return Object.keys(entry).reduce((obj, key) => {
-                const _entry = entry[key];
-                const _html = htmls.find(item => Array.isArray(item.chunks) && item.chunks.includes(key)) || html;
-                obj[key] = {
-                    entry: _entry,
-                    ..._html,
-                };
-                return obj;
-            }, {});
-        }
-
-        return {
-            index: {
-                // page 的入口
-                entry,
-                ...html,
-            },
-        };
+        const _defaultHtml = Array.isArray(htmls) && htmls[0] || {};
+        return Object.keys(entry).reduce((obj, key) => {
+            const _entry = entry[key];
+            const _html = html[key]
+                || htmls.find(item => Array.isArray(item.chunks) && item.chunks.includes(key)) || _defaultHtml; // 兼容
+            obj[key] = {
+                entry: _entry,
+                ..._html,
+            };
+            return obj;
+        }, {});
     }
 
     function nodeModulesPaths() {
         const nodeModulesPath = obj.nodeModulesPath;
         if (nodeModulesPath && !Array.isArray(nodeModulesPath)) {
-            return [ nodeModulesPath ];
+            return [ nodeModulesPath ].sort();
         } else if (Array.isArray(nodeModulesPath)) {
-            return nodeModulesPath;
+            return nodeModulesPath.sort();
         }
         return [];
     }

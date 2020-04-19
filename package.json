@@ -48,35 +48,36 @@
         }
     },
     "peerDependencies": {
-        "@micro-app/core": "^0.3.18"
+        "@micro-app/core": "^0.3.27",
+        "@micro-app/cli": "^0.3.16"
     },
     "devDependencies": {
-        "@babel/core": "^7.9.0",
-        "@babel/preset-env": "^7.9.5",
         "@micro-app/cli": "^0.3.15",
-        "@micro-app/plugin-compatible": "0.0.3",
+        "@micro-app/plugin-compatible": "0.0.4",
         "@micro-app/plugin-deploy": "^0.0.7",
         "@types/jest": "^24.9.1",
         "eslint-config-2o3t": "^2.0.1",
-        "html-webpack-plugin": "^3.2.0",
+        "html-webpack-plugin": "^4.2.0",
         "husky": "^3.1.0",
         "jest": "^24.9.0",
         "typescript": "^3.8.3",
         "vue": "^2.6.11"
     },
     "dependencies": {
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.5",
         "@intervolga/optimize-cssnano-plugin": "^1.0.6",
         "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
-        "@micro-app/shared-utils": "^0.1.17",
+        "@micro-app/shared-utils": "^0.1.18",
         "@soda/friendly-errors-webpack-plugin": "^1.7.1",
         "address": "^1.1.2",
-        "autoprefixer": "^9.7.4",
+        "autoprefixer": "^9.7.6",
         "babel-loader": "^8.1.0",
         "cache-loader": "^4.1.0",
         "case-sensitive-paths-webpack-plugin": "^2.3.0",
         "cli-highlight": "^2.1.4",
         "clipboardy": "^2.3.0",
-        "css-loader": "^3.4.2",
+        "css-loader": "^3.5.2",
         "cssnano": "^4.1.10",
         "default-gateway": "^6.0.0",
         "file-loader": "^5.1.0",
@@ -86,12 +87,13 @@
         "portfinder": "^1.0.25",
         "postcss-loader": "^3.0.0",
         "ts-loader": "^6.2.2",
-        "url-loader": "^4.0.0",
+        "url-loader": "^4.1.0",
         "vue-loader": "^15.9.1",
         "vue-style-loader": "^4.1.2",
         "webpack": "^4",
         "webpack-chain": "^6.4.0",
-        "webpack-dev-server": "^3"
+        "webpack-dev-server": "^3",
+        "webpack-manifest-plugin": "^2.2.0"
     },
     "peerDependenciesMeta": {
         "less-loader": {

@@ -1,7 +1,8 @@
 'use strict';
 
-const { _, tryRequire } = require('@micro-app/shared-utils');
-const path = require('path');
+const { _, tryRequire, path } = require('@micro-app/shared-utils');
+
+const DEFAULT_KEY = 'main';
 
 module.exports = function configParser(obj, key, extraConfig = {}) {
     const selfConfig = obj[key] || {};
@@ -27,6 +28,7 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
         });
     }
 
+    // @Deprecated
     function htmls() {
         if (extraConfig.disabled) {
             return [];
@@ -57,6 +59,50 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
         return htmls;
     }
 
+    function html() {
+        if (extraConfig.disabled) {
+            return {};
+        }
+        // 支持 array
+        const html = originalConfig.html || {};
+        if (typeof html === 'object') {
+            Object.keys(html).forEach(key => {
+                const _htmls = html[key];
+                if (Array.isArray(_htmls)) {
+                    html[key] = _htmls.map(item => {
+                        if (!tryRequire.resolve(item.template)) {
+                            item.template = path.resolve(selfConfig.root, item.template);
+                        }
+                        return item;
+                    });
+                } else if (typeof _htmls === 'string') {
+                    if (!tryRequire.resolve(_htmls)) {
+                        html[key] = {
+                            template: path.resolve(selfConfig.root, _htmls),
+                        };
+                    }
+                }
+            });
+        } else if (Array.isArray(html)) {
+            return {
+                [DEFAULT_KEY]: html.map(item => {
+                    if (!tryRequire.resolve(item.template)) {
+                        item.template = path.resolve(selfConfig.root, item.template);
+                    }
+                    return item;
+                }),
+            };
+
+        } else if (typeof html === 'string') {
+            return {
+                [DEFAULT_KEY]: {
+                    template: path.resolve(selfConfig.root, html),
+                },
+            };
+        }
+        return html;
+    }
+
     function entry() {
         if (extraConfig.disabled) {
             return {};
@@ -81,7 +127,7 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
             });
         } else if (Array.isArray(entry)) {
             return {
-                main: entry.map(item => {
+                [DEFAULT_KEY]: entry.map(item => {
                     if (!tryRequire.resolve(item)) {
                         return path.resolve(selfConfig.root, item);
                     }
@@ -89,11 +135,9 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
                 }),
             };
         } else if (typeof entry === 'string') {
-            if (!tryRequire.resolve(entry)) {
-                return {
-                    main: [ path.resolve(selfConfig.root, entry) ],
-                };
-            }
+            return {
+                [DEFAULT_KEY]: [ path.resolve(selfConfig.root, entry) ],
+            };
         }
         return entry;
     }
@@ -101,6 +145,7 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
     return {
         staticPaths,
         htmls,
+        html,
         entry,
     };
 };
