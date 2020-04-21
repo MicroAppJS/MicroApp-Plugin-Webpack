@@ -11,3 +11,5 @@
 - [ ] 梳理各个模块逻辑，输出文档等。
 
 *暂时放弃 plugin 打包。*
+
+- [ ] 增加一个虚拟文件，利用 alias 提供给 webpack 打包时前端引用。例如 import {} from '@microapp'

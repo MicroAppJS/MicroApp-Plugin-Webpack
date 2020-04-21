@@ -6,7 +6,7 @@ module.exports = function unifiedExtend(api, opts) {
 
     const { tryRequire, fs, hash } = require('@micro-app/shared-utils');
 
-    api.modifyChainWebpackConfig(webpackChain => {
+    api.modifyWebpackChain(webpackChain => {
         const { isWebpack4 } = require('./utils');
 
         const options = api.config || {};

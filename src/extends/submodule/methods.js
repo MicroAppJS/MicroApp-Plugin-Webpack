@@ -1,10 +1,15 @@
 'use strict';
 
-module.exports = api => {
+module.exports = {
 
-    // api.registerMethod('modifyDefaultServerConfig', {
-    //     type: api.API_TYPE.MODIFY,
-    //     description: '修改服务端配置合并事件',
-    // });
+    modifySubModuleWebpackChain: {
+        type: 'MODIFY',
+        description: '修改 SubModule webpack-chain 配置事件',
+    },
+
+    modifySubModuleWebpackConfig: {
+        type: 'MODIFY',
+        description: '修改 SubModule webpack config 配置事件',
+    },
 
 };

@@ -84,8 +84,8 @@ npx micro-app show methods
 ```js
 ╰─➤  npx micro-app show methods
   Plugin Methods:
-     * modifyChainWebpackConfig    ( 合并之后提供 webpack-chain 进行再次修改事件 )
-     * onChainWebpcakConfig        ( 修改之后提供 webpack-chain 进行查看事件 )
+     * modifyWebpackChain          ( 合并之后提供 webpack-chain 进行再次修改事件 )
+     * onWebpcakChain              ( 修改之后提供 webpack-chain 进行查看事件 )
      * modifyWebpackConfig         ( 合并之后提供 webpack config 进行再次修改事件 )
      * onBuildSuccess              ( 构建成功时事件 )
      * onBuildFail                 ( 构建失败时事件 )

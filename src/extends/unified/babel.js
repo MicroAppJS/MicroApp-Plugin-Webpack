@@ -6,7 +6,7 @@ module.exports = function unifiedExtend(api, opts) {
 
     const path = require('path');
 
-    api.modifyChainWebpackConfig(webpackChain => {
+    api.modifyWebpackChain(webpackChain => {
         // const isProd = api.mode === 'production';
         // const rootOptions = api.config || {};
 

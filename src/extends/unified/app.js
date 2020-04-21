@@ -36,7 +36,7 @@ module.exports = function unifiedExtend(api, opts) {
             });
     }
 
-    api.modifyChainWebpackConfig(webpackChain => {
+    api.modifyWebpackChain(webpackChain => {
 
         const options = api.config || {};
 

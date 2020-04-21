@@ -72,7 +72,7 @@ module.exports = function serveCommand(api, opts) {
             };
 
             // configs that only matters for dev server
-            api.modifyChainWebpackConfig(webpackChain => {
+            api.modifyWebpackChain(webpackChain => {
 
                 // webpack 4
                 const isWebpack4 = semver.satisfies(webpackVersion, '>=4');

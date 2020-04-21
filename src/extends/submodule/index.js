@@ -4,9 +4,6 @@ module.exports = function subModuleWebpack(api, opts) {
 
     api.assertVersion('>=0.3.26');
 
-    const registerMethods = require('./methods');
-    registerMethods(api);
-
     // TODO 只有开启 --sub-module 时才处理
     if (!api.context.subModule) {
         return;
@@ -53,7 +50,7 @@ module.exports = function subModuleWebpack(api, opts) {
 
 
     // 生成 manifest
-    api.modifyChainWebpackConfig(webpackChain => {
+    api.modifyWebpackChain(webpackChain => {
         const otherOptions = Object.keys(config.subModule).reduce((obj, key) => {
             if (![ 'prefix', 'namespace', 'entry' ].includes(key)) {
                 obj[key] = config.subModule[key];
@@ -83,7 +80,7 @@ module.exports = function subModuleWebpack(api, opts) {
             }])
             .end();
 
-        return webpackChain;
+        return api.applyPluginHooks('modifySubModuleWebpackChain', webpackChain);
     });
 
     api.modifyWebpackConfig(webpackConfig => {
@@ -98,10 +95,11 @@ module.exports = function subModuleWebpack(api, opts) {
             webpackConfig.output.chunkFilename = `js/${prefix}_${namespace}-[name].[contenthash:8].js`;
         }
 
-        // TODO 提供方法对外补充一些修改
-        return webpackConfig;
+        return api.applyPluginHooks('modifySubModuleWebpackConfig', webpackConfig);
     });
 };
+
+module.exports.registerMethod = require('./methods');
 
 module.exports.configuration = {
     description: 'webpack 适配增强 config 配置信息',

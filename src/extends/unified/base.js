@@ -36,7 +36,7 @@ module.exports = function unifiedExtend(api, opts) {
         return webpackChain;
     }
 
-    api.modifyChainWebpackConfig(webpackChain => {
+    api.modifyWebpackChain(webpackChain => {
 
         webpackChain = baseConfig(webpackChain);
 

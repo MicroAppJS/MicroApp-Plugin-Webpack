@@ -4,7 +4,7 @@ module.exports = function unifiedExtend(api, opts) {
 
     api.assertVersion('>=0.3.0');
 
-    api.modifyChainWebpackConfig(webpackChain => {
+    api.modifyWebpackChain(webpackChain => {
         // const isProd = api.mode === 'production';
         // const rootOptions = api.config || {};
 

@@ -6,7 +6,7 @@ module.exports = function unifiedExtend(api, opts) {
 
     const { tryRequire } = require('@micro-app/shared-utils');
 
-    api.modifyChainWebpackConfig(webpackChain => {
+    api.modifyWebpackChain(webpackChain => {
         const { getAssetPath, isWebpack4 } = require('./utils');
 
         const options = api.config || {};
