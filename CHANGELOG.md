@@ -1,3 +1,10 @@
+## [0.0.14](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.13...v0.0.14) (2020-04-21)
+
+
+### Bug Fixes
+
+* fixed entry key ([57138b0](https://github.com/MicroAppJS/plugin-webpack/commit/57138b097fc1b9181aded35a676b9d2898a85b7c))
+
 ## [0.0.13](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.12...v0.0.13) (2020-04-21)
 
 
