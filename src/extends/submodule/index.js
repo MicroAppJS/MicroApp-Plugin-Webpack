@@ -33,6 +33,7 @@ module.exports = function subModuleWebpack(api, opts) {
         namespace: _configParser.namespace(),
         entry: _configParser.entry(),
         fileName: _configParser.fileName(),
+        outputDir: _configParser.outputDir(),
     });
 
     // change config.pages
@@ -52,7 +53,7 @@ module.exports = function subModuleWebpack(api, opts) {
     // 生成 manifest
     api.modifyWebpackChain(webpackChain => {
         const otherOptions = Object.keys(config.subModule).reduce((obj, key) => {
-            if (![ 'prefix', 'namespace', 'entry' ].includes(key)) {
+            if (![ 'prefix', 'namespace', 'entry', 'outputDir' ].includes(key)) {
                 obj[key] = config.subModule[key];
             }
             return obj;
@@ -79,6 +80,14 @@ module.exports = function subModuleWebpack(api, opts) {
                 ...otherOptions,
             }])
             .end();
+
+        // change outputDir
+        if (config.subModule && config.subModule.outputDir) {
+            webpackChain
+                .output
+                .path(api.resolve(outputDir))
+                .end();
+        }
 
         return api.applyPluginHooks('modifySubModuleWebpackChain', webpackChain);
     });

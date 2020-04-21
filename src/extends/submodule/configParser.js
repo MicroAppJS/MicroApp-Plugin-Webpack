@@ -12,10 +12,11 @@ module.exports = function configParser(selfConfig = {}) {
         const entry = subModule.entry || {};
         // fix entry path
         if (typeof entry === 'object') {
+            const newEntry = {};
             Object.keys(entry).forEach(key => {
                 const _entrys = entry[key];
                 if (Array.isArray(_entrys)) {
-                    entry[getNewKey(key)] = _entrys.map(item => {
+                    newEntry[getNewKey(key)] = _entrys.map(item => {
                         if (!tryRequire.resolve(item)) {
                             return path.resolve(selfConfig.root, item);
                         }
@@ -23,10 +24,11 @@ module.exports = function configParser(selfConfig = {}) {
                     });
                 } else if (typeof _entrys === 'string') {
                     if (!tryRequire.resolve(_entrys)) {
-                        entry[getNewKey(key)] = [ path.resolve(selfConfig.root, _entrys) ];
+                        newEntry[getNewKey(key)] = [ path.resolve(selfConfig.root, _entrys) ];
                     }
                 }
             });
+            return newEntry;
         } else if (Array.isArray(entry)) {
             return {
                 [getNewKey('index')]: entry.map(item => {
@@ -60,7 +62,12 @@ module.exports = function configParser(selfConfig = {}) {
     }
 
     function getNewKey(key) {
-        return `${prefix()}_${namespace()}-${key}`;
+        return `${prefix()}${namespace()}-${key}`;
+    }
+
+    function outputDir() {
+        const _outputDir = subModule.outputDir || false;
+        return _outputDir;
     }
 
     return {
@@ -68,6 +75,7 @@ module.exports = function configParser(selfConfig = {}) {
         namespace,
         prefix,
         fileName,
+        outputDir,
     };
 };
 
