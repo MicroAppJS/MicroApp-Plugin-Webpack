@@ -1,3 +1,16 @@
+## [0.0.13](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.12...v0.0.13) (2020-04-21)
+
+
+### Bug Fixes
+
+* fixed `CopyOption` bug ([8c2ff84](https://github.com/MicroAppJS/plugin-webpack/commit/8c2ff840dff625a5efea16bfe427d7c5e8f20109))
+* fixed `CopyOption` bug ([6a47fe6](https://github.com/MicroAppJS/plugin-webpack/commit/6a47fe67bd2b30683d9a6f487c5195a2be266591))
+
+
+### Features
+
+* add `subModule` ([aeee006](https://github.com/MicroAppJS/plugin-webpack/commit/aeee00695450d3bbf5d7c016ad7cb92c4e71008b))
+
 ## [0.0.12](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.11...v0.0.12) (2020-04-09)
 
 
