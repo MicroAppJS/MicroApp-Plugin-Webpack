@@ -31,7 +31,7 @@ module.exports = function subModuleWebpack(api, opts) {
     Object.assign(config.subModule, subModule, {
         prefix: _configParser.prefix(),
         namespace: _configParser.namespace(),
-        entry: _configParser.entry(),
+        entry: _configParser.entry(), // 这里会覆盖掉原来的 key
         fileName: _configParser.fileName(),
         outputDir: _configParser.outputDir(),
     });
