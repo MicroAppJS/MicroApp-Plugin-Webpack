@@ -1,3 +1,10 @@
+## [0.0.17](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.16...v0.0.17) (2021-03-25)
+
+
+### Bug Fixes
+
+* 修复svg的配置 ([aedcfcb](https://github.com/MicroAppJS/plugin-webpack/commit/aedcfcb982c96e5ebe06cd84365bbaafb780ee40))
+
 ## [0.0.16](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.15...v0.0.16) (2021-03-25)
 
 
