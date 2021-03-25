@@ -53,9 +53,7 @@ module.exports = function unifiedExtend(api, opts) {
             .test(/\.(svg)(\?.*)?$/)
             .use('file-loader')
             .loader(require.resolve('file-loader'))
-            .options({
-                name: genAssetSubPath('img'),
-            });
+            .options(genUrlLoaderOptions('img').fallback.options);
 
         webpackChain.module
             .rule('media')
