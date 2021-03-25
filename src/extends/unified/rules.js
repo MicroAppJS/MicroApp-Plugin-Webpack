@@ -32,6 +32,7 @@ module.exports = function unifiedExtend(api, opts) {
                     loader: require.resolve('file-loader'),
                     options: {
                         name: genAssetSubPath(dir),
+                        esModule: false,
                     },
                 },
             };
@@ -42,7 +43,7 @@ module.exports = function unifiedExtend(api, opts) {
             .test(/\.(png|jpe?g|gif|webp)(\?.*)?$/)
             .use('url-loader')
             .loader(require.resolve('url-loader'))
-            .options(genUrlLoaderOptions('images'));
+            .options(genUrlLoaderOptions('img'));
 
 
         // do not base64-inline SVGs.

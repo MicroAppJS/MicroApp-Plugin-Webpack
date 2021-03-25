@@ -90,9 +90,17 @@ module.exports = function unifiedExtend(api, opts) {
                         });
                     }
 
-                    webpackChain
-                        .plugin(pname)
-                        .use(HTMLPlugin, [ htmlOpts ]);
+                    if (!webpackChain.plugins.has(pname)) {
+                        webpackChain
+                            .plugin(pname)
+                            .use(HTMLPlugin, [ htmlOpts ]);
+                    } else {
+                        webpackChain
+                            .plugin(pname)
+                            .tap(args => {
+                                return [ Object.assign({}, args[0] || {}, htmlOpts) ];
+                            });
+                    }
                 });
             } else {
                 api.logger.warn('[webpack]', 'Not Found "html-webpack-plugin"');
