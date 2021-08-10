@@ -48,7 +48,7 @@ module.exports = function configParser(selfConfig = {}) {
 
     function prefix() {
         const _prefix = subModule.prefix || SUB_MODULES_FILE_NAME;
-        return `${_prefix}-`;
+        return _prefix;
     }
 
     function namespace() {
