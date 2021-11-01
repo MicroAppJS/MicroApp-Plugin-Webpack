@@ -52,8 +52,7 @@ module.exports = function configParser(selfConfig = {}) {
     }
 
     function namespace() {
-        const key = hash(selfConfig.key);
-        const _namespace = subModule.namespace || key;
+        const _namespace = subModule.namespace || selfConfig.namespace || hash(selfConfig.key);
         return _namespace;
     }
 
@@ -65,6 +64,7 @@ module.exports = function configParser(selfConfig = {}) {
         return `${prefix()}${namespace()}-${key}`;
     }
 
+    // 如果没有新的设置，默认会用主应用配置
     function outputDir() {
         const _outputDir = subModule.outputDir || false;
         return _outputDir;

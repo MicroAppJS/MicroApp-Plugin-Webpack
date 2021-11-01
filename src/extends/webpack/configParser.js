@@ -1,11 +1,10 @@
 'use strict';
 
-const { _, tryRequire, path } = require('@micro-app/shared-utils');
+const { _, hash, tryRequire, path } = require('@micro-app/shared-utils');
 
 const DEFAULT_KEY = 'main';
 
-module.exports = function configParser(obj, key, extraConfig = {}) {
-    const selfConfig = obj[key] || {};
+module.exports = function configParser(selfConfig, extraConfig = {}) {
     const originalConfig = selfConfig.originalConfig || {};
     const webpackConfig = originalConfig.webpack || {};
 
@@ -142,10 +141,16 @@ module.exports = function configParser(obj, key, extraConfig = {}) {
         return entry;
     }
 
+    function namespace() {
+        const _namespace = selfConfig.namespace || hash(selfConfig.key);
+        return _namespace;
+    }
+
     return {
         staticPaths,
         htmls,
         html,
         entry,
+        namespace,
     };
 };

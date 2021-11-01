@@ -16,7 +16,7 @@ module.exports = function extendWebpack(api, opts) {
     const microsConfig = api.microsConfig;
     Object.keys(microsConfig).forEach(key => {
         const item = microsConfig[key];
-        const _configParser = configParser(microsConfig, key, microsExtraConfig[key]);
+        const _configParser = configParser(item, microsExtraConfig[key]);
         Object.assign(item, {
             entry: _configParser.entry(),
             html: _configParser.html(),

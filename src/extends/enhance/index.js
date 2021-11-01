@@ -13,7 +13,7 @@ module.exports = function WebpackAdapter(api, opts) {
 
     api.extendMethod('resolveWebpackChain', {
         description: 'resolve webpack-chain config.',
-    }, (webpackChainConfig = new Config()) => {
+    }, (webpackChainConfig = new Config(), isServer = false) => {
         if (!initialized) {
             logger.throw('please call after "onInitWillDone" !');
         }
@@ -29,8 +29,12 @@ module.exports = function WebpackAdapter(api, opts) {
         webpackChainConfig.merge(_originalWebpackConfig);
 
         const target = api.target; // target, 默认 web
-        if ([ 'app', 'lib', 'web' ].includes(target)) { // 其它类型外部自己设置
-            webpackChainConfig.target('web');
+        if (!webpackChainConfig.get('target')) {
+            if (isServer) {
+                webpackChainConfig.target('node');
+            } else if ([ 'app', 'lib', 'web' ].includes(target)) { // 其它类型外部自己设置
+                webpackChainConfig.target('web');
+            }
         }
 
         const finalWebpackChainConfig = api.applyPluginHooks('modifyWebpackChain', webpackChainConfig);
@@ -42,8 +46,8 @@ module.exports = function WebpackAdapter(api, opts) {
 
     api.extendMethod('resolveWebpackConfig', {
         description: 'resolve webpack config.',
-    }, webpackChainConfig => {
-        const finalWebpackChainConfig = api.resolveWebpackChain(webpackChainConfig);
+    }, (webpackChainConfig, isServer = false) => {
+        const finalWebpackChainConfig = api.resolveWebpackChain(webpackChainConfig, isServer);
         const webpackConfig = finalWebpackChainConfig.toConfig();
         const finalWebpackConfig = api.applyPluginHooks('modifyWebpackConfig', webpackConfig);
         api.applyPluginHooks('onWebpcakConfig', finalWebpackConfig);
