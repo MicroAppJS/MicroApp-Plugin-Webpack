@@ -1,3 +1,5 @@
+## [0.0.19](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.18...v0.0.19) (2021-11-01)
+
 ## [0.0.18](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.17...v0.0.18) (2021-09-10)
 
 
