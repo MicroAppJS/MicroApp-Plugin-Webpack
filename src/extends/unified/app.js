@@ -62,7 +62,7 @@ module.exports = function unifiedExtend(api, opts) {
             if (HTMLPlugin) {
                 pages.forEach((name, index) => {
                     const htmlOpts = multiPageConfig[name];
-                    const pname = index ? `html-${name}-${index}` : `html-${name}`;
+                    const pname = `html-${name}`;
 
                     if (!htmlOpts.chunks) {
                         htmlOpts.chunks = [ name ];
