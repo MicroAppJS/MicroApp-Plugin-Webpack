@@ -1,3 +1,10 @@
+# [0.1.0](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.19...v0.1.0) (2021-12-21)
+
+
+### Features
+
+* 更新相关依赖版本 ([e4edae7](https://github.com/MicroAppJS/plugin-webpack/commit/e4edae76016272c7acffe3db697ed6223754b7e4))
+
 ## [0.0.19](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.18...v0.0.19) (2021-11-01)
 
 ## [0.0.18](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.17...v0.0.18) (2021-09-10)
