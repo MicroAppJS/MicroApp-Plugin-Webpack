@@ -28,12 +28,14 @@ module.exports = function WebpackAdapter(api, opts) {
         delete _originalWebpackConfig.plugins; // 不接受 plugins
         webpackChainConfig.merge(_originalWebpackConfig);
 
-        const target = api.target; // target, 默认 web
+        const target = api.target; // target, 默认 app
         if (!webpackChainConfig.get('target')) {
-            if (isServer) {
+            if (target === 'app' && isServer) { // 默认值
                 webpackChainConfig.target('node');
             } else if ([ 'app', 'lib', 'web' ].includes(target)) { // 其它类型外部自己设置
                 webpackChainConfig.target('web');
+            } else {
+                webpackChainConfig.target(target);
             }
         }
 

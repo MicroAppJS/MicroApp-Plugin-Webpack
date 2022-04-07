@@ -40,7 +40,7 @@ module.exports = function buildCommand(api, opts) {
                 }
             }
 
-            const webpackConfig = api.resolveWebpackConfig();
+            const webpackConfig = api.resolveWebpackConfig(undefined, api.target);
 
             const options = api.config || {};
 
