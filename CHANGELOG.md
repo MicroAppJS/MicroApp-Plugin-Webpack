@@ -1,3 +1,10 @@
+## [0.1.1](https://github.com/MicroAppJS/plugin-webpack/compare/v0.1.0...v0.1.1) (2022-04-08)
+
+
+### Bug Fixes
+
+* 修复 target 参数赋值 ([6c48db6](https://github.com/MicroAppJS/plugin-webpack/commit/6c48db6d3c18d3cea1e0b03dd3084eedb343583a))
+
 # [0.1.0](https://github.com/MicroAppJS/plugin-webpack/compare/v0.0.19...v0.1.0) (2021-12-21)
 
 
