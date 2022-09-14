@@ -71,7 +71,7 @@ module.exports = function unifiedExtend(api, opts) {
                         };
                     }) ]);
             } else {
-                api.logger.warn('[webpack]', 'Not Found "copy-webpack-plugin"');
+                api.logger.warn('[webpack]', 'Not Found "copy-webpack-plugin:^5.1.2"');
             }
         }
 

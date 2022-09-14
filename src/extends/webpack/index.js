@@ -42,6 +42,7 @@ module.exports = function extendWebpack(api, opts) {
             'assetsDir',
             'devServer',
             'css',
+            'filenameHashing',
         ]);
     }));
 
@@ -54,6 +55,7 @@ module.exports = function extendWebpack(api, opts) {
         assetsDir: '',
         devServer: {},
         css: {},
+        filenameHashing: false,
     };
     smartMerge(config, ...Object.values(microsConfig).map(item => {
         return _.pick(item || {}, [

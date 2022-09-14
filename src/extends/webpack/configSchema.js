@@ -57,6 +57,10 @@ module.exports = {
             description: 'assets resource path. ( stirng )',
             type: 'string',
         },
+        filenameHashing: {
+            description: 'filenameHashing. ( boolean )',
+            type: 'boolean',
+        },
     },
     type: 'object',
 };

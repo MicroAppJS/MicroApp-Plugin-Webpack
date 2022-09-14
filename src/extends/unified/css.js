@@ -44,6 +44,7 @@ module.exports = function unifiedExtend(api, opts) {
             extract = isProd,
             sourceMap = false,
             loaderOptions = {},
+            productionSourceMap = false,
         } = rootOptions.css || {};
 
         let { requireModuleExtension } = rootOptions.css || {};
@@ -102,7 +103,7 @@ module.exports = function unifiedExtend(api, opts) {
                 cssDeclarationSorter: false,
             }],
         };
-        if (rootOptions.productionSourceMap && sourceMap) {
+        if (productionSourceMap && sourceMap) {
             cssnanoOptions.map = { inline: false };
         }
 
@@ -245,7 +246,7 @@ module.exports = function unifiedExtend(api, opts) {
                 webpackChain
                     .plugin('optimize-css')
                     .use(require('@intervolga/optimize-cssnano-plugin'), [{
-                        sourceMap: rootOptions.productionSourceMap && sourceMap,
+                        sourceMap: productionSourceMap && sourceMap,
                         cssnanoOptions,
                     }]);
             }
