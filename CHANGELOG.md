@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/MicroAppJS/plugin-webpack/compare/v0.1.2...v0.1.3) (2023-04-08)
+
+
+### Features
+
+* add html opts ([43b3985](https://github.com/MicroAppJS/plugin-webpack/commit/43b398541353a2a4fe117c867802a72b5a8de070))
+
 ## [0.1.2](https://github.com/MicroAppJS/plugin-webpack/compare/v0.1.1...v0.1.2) (2022-09-14)
 
 
