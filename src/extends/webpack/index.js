@@ -60,6 +60,7 @@ module.exports = function extendWebpack(api, opts) {
     smartMerge(config, ...Object.values(microsConfig).map(item => {
         return _.pick(item || {}, [
             'entry',
+            'html',
             'htmls',
             'staticPaths',
             'pages',
